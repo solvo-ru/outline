@@ -1,26 +1,27 @@
 ARG APP_PATH=/opt/outline
-FROM outlinewiki/outline-base as base
-
-ARG APP_PATH
-WORKDIR $APP_PATH
-
-# ---
 FROM node:20-alpine AS runner
 
+ENV YARN_VERSION=4.2.2
+RUN export YARN_VERSION=$YARN_VERSION
 RUN apk update && apk add --no-cache curl && apk add --no-cache ca-certificates
 
-LABEL org.opencontainers.image.source="https://github.com/outline/outline"
+RUN  rm -rf /opt/yarn-*
+
+RUN corepack disable
+RUN reboot
+RUN corepack enable
+RUN corepack prepare yarn@$YARN_VERSION --activate
 
 ARG APP_PATH
 WORKDIR $APP_PATH
 ENV NODE_ENV production
 
-COPY --from=base $APP_PATH/build ./build
-COPY --from=base $APP_PATH/server ./server
-COPY --from=base $APP_PATH/public ./public
-COPY --from=base $APP_PATH/.sequelizerc ./.sequelizerc
-COPY --from=base $APP_PATH/node_modules ./node_modules
-COPY --from=base $APP_PATH/package.json ./package.json
+COPY . .
+
+RUN yarn workspaces focus --all --production --network-timeout 1000000 && \
+    yarn postinstall && yarn dedupe --strategy highest \
+    yarn cache clean && yarn build
+
 
 RUN addgroup -g 1001 -S nodejs && \
   adduser -S nodejs -u 1001 && \
@@ -36,6 +37,8 @@ RUN mkdir -p "$FILE_STORAGE_LOCAL_ROOT_DIR" && \
 VOLUME /var/lib/outline/data
 
 USER nodejs
+
+RUN corepack prepare yarn@$YARN_VERSION --activate
 
 EXPOSE 3000
 CMD ["yarn", "start"]
