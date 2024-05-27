@@ -76,20 +76,17 @@ class MermaidRenderer {
       mermaid.mermaidAPI.setConfig({
         theme: isDark ? "dark" : "default",
       });
-      mermaid.render(
-        `mermaid-diagram-${this.diagramId}`,
-        text,
-        (svgCode, bindFunctions) => {
-          this.currentTextContent = text;
-          if (text) {
-            Cache.set(cacheKey, svgCode);
-          }
-          element.classList.remove("parse-error", "empty");
-          element.innerHTML = svgCode;
-          bindFunctions?.(element);
-        },
-        element
+      const { svg, bindFunctions } = await mermaid.render(
+        "mermaid-diagram-" + this.diagramId,
+        text
       );
+      this.currentTextContent = text;
+      if (text) {
+        Cache.set(cacheKey, svg);
+      }
+      element.classList.remove("parse-error", "empty");
+      element.innerHTML = svg;
+      bindFunctions?.(element);
     } catch (error) {
       const isEmpty = block.node.textContent.trim().length === 0;
 

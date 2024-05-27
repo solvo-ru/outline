@@ -1,26 +1,16 @@
 ARG APP_PATH=/opt/outline
 FROM node:20-alpine AS runner
 
-ENV YARN_VERSION=4.2.2
-RUN export YARN_VERSION=$YARN_VERSION
-RUN apk update && apk add --no-cache curl && apk add --no-cache ca-certificates
-
-RUN  rm -rf /opt/yarn-*
-
-RUN corepack disable
-RUN reboot
-RUN corepack enable
-RUN corepack prepare yarn@$YARN_VERSION --activate
-
 ARG APP_PATH
 WORKDIR $APP_PATH
-ENV NODE_ENV production
 
 COPY . .
+ARG CDN_URL
 
-RUN yarn workspaces focus --all --production --network-timeout 1000000 && \
-    yarn postinstall && yarn dedupe --strategy highest \
-    yarn cache clean && yarn build
+
+RUN apk update && apk add --no-cache curl && apk add --no-cache ca-certificates
+
+ENV NODE_ENV production
 
 
 RUN addgroup -g 1001 -S nodejs && \
@@ -38,7 +28,6 @@ VOLUME /var/lib/outline/data
 
 USER nodejs
 
-RUN corepack prepare yarn@$YARN_VERSION --activate
 
 EXPOSE 3000
 CMD ["yarn", "start"]

@@ -1,5 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
 import { lighten, transparentize } from "polished";
+import React from "react";
 import styled, { DefaultTheme, css, keyframes } from "styled-components";
 import { videoStyle } from "./Video";
 
@@ -1147,6 +1148,7 @@ mark {
   position: relative;
 }
 
+.code-block[data-language=plantuml],
 .code-block[data-language=mermaidjs] {
   margin: 0.75em 0;
 
@@ -1174,7 +1176,8 @@ mark {
 }
 
 /* Hide code without display none so toolbar can still be positioned against it */
-.ProseMirror[contenteditable="false"] .code-block[data-language=mermaidjs] {
+.ProseMirror[contenteditable="false"] .code-block[data-language=plantuml],
+.ProseMirror[contenteditable="false"] .code-block[data-language=mermaidjs]{
   height: ${props.staticHTML ? "auto" : "0"};
   margin: -0.5em 0;
   overflow: hidden;
@@ -1205,6 +1208,7 @@ mark {
   }
 }
 
+.plantuml-diagram-wrapper,
 .mermaid-diagram-wrapper {
   display: flex;
   align-items: center;
@@ -1524,6 +1528,7 @@ table {
 }
 
 .folded-content,
+.folded-content + .plantuml-diagram-wrapper, 
 .folded-content + .mermaid-diagram-wrapper {
   display: none;
   user-select: none;

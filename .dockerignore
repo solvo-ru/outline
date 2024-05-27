@@ -11,9 +11,7 @@ Makefile
 Procfile
 app.json
 crowdin.yml
-build
 docker-compose.yml
-node_modules
 docker
 .idea
 Dockerfile*

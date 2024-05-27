@@ -1,6 +1,7 @@
 import debounce from "lodash/debounce";
 import last from "lodash/last";
 import sortBy from "lodash/sortBy";
+import PlantUmlEncoder from "plantuml-encoder";
 import { Node } from "prosemirror-model";
 import {
   Plugin,
@@ -13,8 +14,6 @@ import { v4 as uuidv4 } from "uuid";
 import { isCode } from "../lib/isCode";
 import { isRemoteTransaction } from "../lib/multiplayer";
 import { findBlockNodes, NodeWithPos } from "../queries/findChildren";
-import { deflate } from "pako";
-import { Buffer} from "buffer";
 
 type DiagramState = {
   decorationSet: DecorationSet;
@@ -49,15 +48,6 @@ async function fetchSVGContent(url: string): Promise<string> {
   return await response.text();
 }
 
-function generateZippedCode(diagramMarker: string, umlCode: string): string {
-  const diagram = `@start${diagramMarker}\n${umlCode}\n@end${diagramMarker}`;
-  const encodedDiagram = encodeURIComponent(diagram);
-  const unescapedDiagram = unescape(encodedDiagram);
-
-  const deflatedBuffer = Buffer.from(deflate(Buffer.from(unescapedDiagram)));
-  return deflatedBuffer.toString("base64");
-}
-
 class PlantUMLRenderer {
   readonly diagramId: string;
   readonly element: HTMLElement;
@@ -88,19 +78,15 @@ class PlantUMLRenderer {
     }
 
     try {
-      const zippedCode = generateZippedCode(
-        `plantuml-diagram-${this.diagramId}`,
-        text
-      );
+      const zippedCode = PlantUmlEncoder.encode(text);
       const plantServerUrl = `https://www.plantuml.com/plantuml/svg/${zippedCode}`;
-      fetchSVGContent(plantServerUrl).then((svgContent) => {
-        this.currentTextContent = text;
-        if (text) {
-          Cache.set(cacheKey, svgContent);
-        }
-        element.classList.remove("parse-error", "empty");
-        element.innerHTML = svgContent;
-      });
+      const svgContent = await fetchSVGContent(plantServerUrl);
+      this.currentTextContent = text;
+      if (text) {
+        Cache.set(cacheKey, svgContent);
+      }
+      element.classList.remove("parse-error", "empty");
+      element.innerHTML = svgContent;
     } catch (error) {
       const isEmpty = block.node.textContent.trim().length === 0;
 
