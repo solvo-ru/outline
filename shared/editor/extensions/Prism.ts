@@ -36,6 +36,7 @@ export const LANGUAGES = {
   ocaml: "OCaml",
   perl: "Perl",
   php: "PHP",
+  plantuml: "PlantUML",
   powershell: "Powershell",
   python: "Python",
   ruby: "Ruby",

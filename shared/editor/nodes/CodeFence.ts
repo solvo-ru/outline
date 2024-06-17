@@ -72,6 +72,7 @@ import {
 import { selectAll } from "../commands/selectAll";
 import toggleBlockType from "../commands/toggleBlockType";
 import Mermaid from "../extensions/Mermaid";
+import PlantUML from "../extensions/PlantUML";
 import Prism from "../extensions/Prism";
 import { isCode } from "../lib/isCode";
 import { MarkdownSerializerState } from "../lib/markdown/serializer";
@@ -279,6 +280,10 @@ export default class CodeFence extends Node {
         lineNumbers: this.showLineNumbers,
       }),
       Mermaid({
+        name: this.name,
+        isDark: this.editor.props.theme.isDark,
+      }),
+      PlantUML({
         name: this.name,
         isDark: this.editor.props.theme.isDark,
       }),

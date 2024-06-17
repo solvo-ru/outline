@@ -13,6 +13,7 @@ import InVision from "./InVision";
 import JSFiddle from "./JSFiddle";
 import Linkedin from "./Linkedin";
 import Spotify from "./Spotify";
+import Structurizr from "./Structurizr";
 import Trello from "./Trello";
 import Vimeo from "./Vimeo";
 import YouTube from "./YouTube";
@@ -544,6 +545,16 @@ const embeds: EmbedDescriptor[] = [
     component: Spotify,
   }),
   new EmbedDescriptor({
+    title: "Structurizr",
+    keywords: "diagrams structurizr",
+    hideToolbar: false,
+    regexMatch: [
+      /^https:\/\/structurizr\.moarse\.ru\/(share|workspace)\/(\d+)\/diagrams[^#]*#([^/]+)(\/(\d+))?/,
+    ],
+    icon: <Img src="/images/structurizr.png" alt="Structurizr" />,
+    component: Structurizr,
+  }),
+  new EmbedDescriptor({
     title: "Tldraw",
     keywords: "draw schematics diagrams",
     regexMatch: [
@@ -555,7 +566,7 @@ const embeds: EmbedDescriptor[] = [
   new EmbedDescriptor({
     title: "Trello",
     keywords: "kanban",
-    regexMatch: [/^https:\/\/trello\.com\/(c|b)\/([^/]*)(.*)?$/],
+    regexMatch: [/^https:\/\/trello\.com\/([cb])\/([^\/]*)(.*)?$/],
     icon: <Img src="/images/trello.png" alt="Trello" />,
     component: Trello,
   }),
@@ -582,7 +593,7 @@ const embeds: EmbedDescriptor[] = [
     title: "Vimeo",
     keywords: "video",
     regexMatch: [
-      /(http|https)?:\/\/(www\.)?vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/([^/]*)\/videos\/|)(\d+)(?:\/|\?)?([\d\w]+)?/,
+      /(http|https)?:\/\/(www\.)?vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|)(\d+)[\/?]?([\d\w]+)?/,
     ],
     icon: <Img src="/images/vimeo.png" alt="Vimeo" />,
     component: Vimeo,
@@ -601,7 +612,7 @@ const embeds: EmbedDescriptor[] = [
     title: "YouTube",
     keywords: "google video",
     regexMatch: [
-      /(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([a-zA-Z0-9_-]{11})([\&\?](.*))?$/i,
+      /(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([a-zA-Z0-9_-]{11})([&?](.*))?$/i,
     ],
     icon: <Img src="/images/youtube.png" alt="YouTube" />,
     component: YouTube,
