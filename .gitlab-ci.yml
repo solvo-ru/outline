@@ -19,13 +19,21 @@ cache:
 
 stages:
   - dependency_scanning
+  - code_quality
   - test
 
 
 gemnasium-dependency_scanning:
+  stage: dependency_scanning
   variables:
     DS_REMEDIATE: "false"
     DS_MAX_DEPTH: -1
   rules:
     - if: $CI_COMMIT_BRANCH == "develop"
-  stage: dependency_scanning
+  artifacts: 
+    paths: ["gl-dependency-scanning-report.json"]
+
+code_quality: 
+  stage: code_quality
+  artifacts: 
+    paths: ["gl-code-quality-report.json"]
