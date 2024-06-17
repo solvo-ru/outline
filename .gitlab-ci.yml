@@ -31,9 +31,13 @@ gemnasium-dependency_scanning:
   rules:
     - if: $CI_COMMIT_BRANCH == "develop"
   artifacts: 
-    paths: ["gl-dependency-scanning-report.json"]
+    paths: [gl-dependency-scanning-report.json]
+    reports:
+      dependency_scanning: gl-dependency-scanning-report.json
 
 code_quality: 
   stage: code_quality
   artifacts: 
-    paths: ["gl-code-quality-report.json"]
+    paths: [gl-code-quality-report.json]
+    reports:
+      codequality: gl-code-quality-report.json
