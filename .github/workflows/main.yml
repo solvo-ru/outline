@@ -13,7 +13,7 @@ on:
 
 jobs:
   sync_latest_from_upstream:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted    
     name: Sync latest commits from upstream repo
 
     steps:
