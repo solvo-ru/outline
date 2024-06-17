@@ -1,11 +1,7 @@
 include:
   - template: Jobs/Code-Quality.gitlab-ci.yml
+  - template: Jobs/Dependency-Scanning.gitlab-ci.yml
 
-image: node:latest
-
-# Pick zero or more services to be used on all builds.
-# Only needed when using a docker container to run your tests in.
-# Check out: https://docs.gitlab.com/ee/ci/services/index.html
 services:
   - quay.io/keycloak/keycloak:latest
   - minio/minio:latest
@@ -22,17 +18,13 @@ cache:
     - node_modules/
 
 stages:
-  - dependency-scanning
+  - test
+  - dependency_scanning
 
-dependency-scanning:
-  stage: dependency-scanning
-  script:
-    - npm install
-    - npm audit --json
-  allow_failure: true
-  only:
-    - develop
-  schedule:
-    - cron: "0 0 * * 0" # Weekly schedule, every Sunday at 12:00 AM
-
-
+gemnasium-dependency_scanning:
+  variables:
+    DS_REMEDIATE: "false"
+    DS_MAX_DEPTH: -1
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+  stage: dependency_scanning
