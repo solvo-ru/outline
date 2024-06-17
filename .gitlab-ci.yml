@@ -13,9 +13,7 @@ include:
 
 # This folder is cached between builds
 # https://docs.gitlab.com/ee/ci/yaml/index.html#cache
-cache:
-  paths:
-    - node_modules/
+
 
 stages:
   - dependency_scanning
@@ -28,6 +26,7 @@ gemnasium-dependency_scanning:
   variables:
     DS_REMEDIATE: "false"
     DS_MAX_DEPTH: -1
+    DS_ANALYZER_NAME: gemnasium
   rules:
     - if: $CI_COMMIT_BRANCH == "develop"
   artifacts: 
@@ -36,6 +35,8 @@ gemnasium-dependency_scanning:
       dependency_scanning: gl-dependency-scanning-report.json
 
 code_quality: 
+  variables:
+    DOCKER_HOST: kvm-el8-porp.solvo.ru
   stage: code_quality
   artifacts: 
     paths: [gl-code-quality-report.json]
