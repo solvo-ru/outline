@@ -30,13 +30,13 @@ gemnasium-dependency_scanning:
   rules:
     - if: $CI_COMMIT_BRANCH == "develop"
   artifacts: 
-    paths: [gl-dependency-scanning-report.json]
+    paths: [gl-dependency-scanning-report.json,gl-code-quality-report.json]
     reports:
       dependency_scanning: gl-dependency-scanning-report.json
 
 code_quality: 
   variables:
-    DOCKER_HOST: kvm-el8-porp.solvo.ru
+    DOCKER_HOST: gitlab-runner
   stage: code_quality
   artifacts: 
     paths: [gl-code-quality-report.json]
