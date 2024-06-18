@@ -20,8 +20,8 @@ defaults: &defaults
 executors:
   docker-publisher:
     environment:
-      IMAGE_NAME: outlinewiki/outline
-      BASE_IMAGE_NAME: outlinewiki/outline-base
+      IMAGE_NAME: solvo-ru/solvo-outline
+      BASE_IMAGE_NAME: solvo-ru/solvo-outline-base
     docker:
       - image: circleci/buildpack-deps:stretch
 
