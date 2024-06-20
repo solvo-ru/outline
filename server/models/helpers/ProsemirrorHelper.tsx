@@ -403,7 +403,7 @@ export class ProsemirrorHelper {
     // Inject mermaidjs scripts if the document contains mermaid diagrams
     if (options?.includeMermaid) {
       const mermaidElements = dom.window.document.querySelectorAll(
-        `[data-language="mermaidjs"] pre code`
+        `[data-language="mermaid"] pre code`
       );
 
       // Unwrap <pre> tags to enable Mermaid script to correctly render inner content

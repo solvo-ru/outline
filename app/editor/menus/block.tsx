@@ -203,7 +203,7 @@ export default function blockMenuItems(dictionary: Dictionary): MenuItem[] {
       title: "Mermaid Diagram",
       icon: <Img src="/images/mermaidjs.png" alt="Mermaid Diagram" />,
       keywords: "diagram flowchart",
-      attrs: { language: "mermaidjs" },
+      attrs: { language: "mermaid" },
     },
     {
       name: "code_block",

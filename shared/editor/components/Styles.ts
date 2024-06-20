@@ -1201,7 +1201,7 @@ mark {
 }
 
 .code-block[data-language=plantuml],
-.code-block[data-language=mermaidjs] {
+.code-block[data-language=mermaid] {
   margin: 0.75em 0;
 
   ${
@@ -1229,7 +1229,7 @@ mark {
 
 /* Hide code without display none so toolbar can still be positioned against it */
 .ProseMirror[contenteditable="false"] .code-block[data-language=plantuml],
-.ProseMirror[contenteditable="false"] .code-block[data-language=mermaidjs]{
+.ProseMirror[contenteditable="false"] .code-block[data-language=mermaid]{
   height: ${props.staticHTML ? "auto" : "0"};
   margin: -0.5em 0;
   overflow: hidden;
@@ -1260,8 +1260,8 @@ mark {
   }
 }
 
-.plantuml-diagram-wrapper,
-.mermaid-diagram-wrapper {
+.plantuml-wrapper,
+.mermaid-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1718,8 +1718,8 @@ table {
 }
 
 .folded-content,
-.folded-content + .plantuml-diagram-wrapper, 
-.folded-content + .mermaid-diagram-wrapper {
+.folded-content + .plantuml-wrapper, 
+.folded-content + .mermaid-wrapper {
   display: none;
   user-select: none;
 }

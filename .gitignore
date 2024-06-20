@@ -16,3 +16,5 @@ data/*
 *.cert
 .github/workflows/main.yaml
 .yarn*
+!/.eslintignore
+!/.eslintrc

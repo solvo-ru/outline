@@ -30,7 +30,7 @@ export const LANGUAGES = {
   kotlin: "Kotlin",
   lisp: "Lisp",
   lua: "Lua",
-  mermaidjs: "Mermaid Diagram",
+  mermaid: "Mermaid Diagram",
   nix: "Nix",
   objectivec: "Objective-C",
   ocaml: "OCaml",
