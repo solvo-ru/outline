@@ -1,9 +1,9 @@
-import SuperFence, { Cache, Renderer, SuperFenceState } from "./SuperFence";
 import PlantUmlEncoder from "plantuml-encoder";
 import { Node } from "prosemirror-model";
 import { Plugin } from "prosemirror-state";
 import { DecorationSet } from "prosemirror-view";
-import env from "@server/env";
+import env from "../../env";
+import SuperFence, { Cache, Renderer, SuperFenceState } from "./SuperFence";
 
 const PLANT_UML = "plantuml";
 
@@ -16,6 +16,7 @@ class PlantUMLRenderer extends Renderer {
   constructor() {
     super(PLANT_UML);
   }
+
   renderImmediately = async (
     block: { node: Node; pos: number },
     isDark: boolean

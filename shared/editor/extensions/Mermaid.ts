@@ -14,6 +14,7 @@ class MermaidRenderer extends Renderer{
   constructor() {
     super(MERMAID);
   }
+
   renderImmediately = async (
     block: { node: Node; pos: number },
     isDark: boolean

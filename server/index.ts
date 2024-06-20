@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
+ 
 /* eslint-disable import/order */
 import env from "./env";
 

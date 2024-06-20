@@ -11,7 +11,7 @@ export type DocumentContextValue = {
 
 const DocumentContext = React.createContext<DocumentContextValue>({
   editor: null,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+   
   setEditor() {},
 });
 

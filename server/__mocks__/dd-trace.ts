@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
+ 
 import { Tracer } from "dd-trace";
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
+ 
 const emptyFn = function () {};
 
 const callableHandlers = {
