@@ -3,10 +3,10 @@ import Token from "markdown-it/lib/token";
 import { exitCode } from "prosemirror-commands";
 import { textblockTypeInputRule } from "prosemirror-inputrules";
 import {
+  Node as ProsemirrorNode,
   NodeSpec,
   NodeType,
   Schema,
-  Node as ProsemirrorNode,
 } from "prosemirror-model";
 import { Command, Plugin, PluginKey, TextSelection } from "prosemirror-state";
 import { Decoration, DecorationSet } from "prosemirror-view";
@@ -64,14 +64,15 @@ import Storage from "../../utils/Storage";
 import { isMac } from "../../utils/browser";
 import backspaceToParagraph from "../commands/backspaceToParagraph";
 import {
-  newlineInCode,
   insertSpaceTab,
   moveToNextNewline,
   moveToPreviousNewline,
+  newlineInCode,
 } from "../commands/codeFence";
 import { selectAll } from "../commands/selectAll";
 import toggleBlockType from "../commands/toggleBlockType";
 import Mermaid from "../extensions/Mermaid";
+import OpenAPI from "../extensions/OpenAPI";
 import PlantUML from "../extensions/PlantUML";
 import Prism from "../extensions/Prism";
 import { isCode } from "../lib/isCode";
@@ -280,6 +281,10 @@ export default class CodeFence extends Node {
         lineNumbers: this.showLineNumbers,
       }),
       Mermaid({
+        name: this.name,
+        isDark: this.editor.props.theme.isDark,
+      }),
+      OpenAPI({
         name: this.name,
         isDark: this.editor.props.theme.isDark,
       }),

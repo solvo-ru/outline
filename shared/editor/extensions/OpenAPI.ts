@@ -1,13 +1,15 @@
 import { Node } from "prosemirror-model";
 import { Plugin } from "prosemirror-state";
 import { DecorationSet } from "prosemirror-view";
+import Stoplight from "./Stoplight";
 import SuperFence, { Cache, Renderer, SuperFenceState } from "./SuperFence";
 
-const MERMAID = "mermaid";
+const OPENAPI = "openapi";
 
-class MermaidRenderer extends Renderer {
+
+class OpenAPIRenderer extends Renderer {
   constructor() {
-    super(MERMAID);
+    super(OPENAPI);
   }
 
   renderImmediately = async (
@@ -26,21 +28,12 @@ class MermaidRenderer extends Renderer {
     }
 
     try {
-      const { default: mermaid } = await import("mermaid");
-      mermaid.mermaidAPI.setConfig({
-        theme: isDark ? "dark" : "default",
-      });
-      const { svg, bindFunctions } = await mermaid.render(
-        "mermaid-" + this.diagramId,
-        text
-      );
+      Stoplight(element, text);
       this.currentTextContent = text;
       if (text) {
-        Cache.set(cacheKey, svg);
+        Cache.set(cacheKey, element.innerHTML);
       }
       element.classList.remove("parse-error", "empty");
-      element.innerHTML = svg;
-      bindFunctions?.(element);
     } catch (error) {
       const isEmpty = block.node.textContent.trim().length === 0;
 
@@ -55,7 +48,7 @@ class MermaidRenderer extends Renderer {
   };
 }
 
-export default function Mermaid({
+export default function OpenAPI({
   name,
   isDark,
 }: {
@@ -64,5 +57,5 @@ export default function Mermaid({
 }): Plugin<
   SuperFenceState | { decorationSet: DecorationSet; isDark: boolean }
 > {
-  return SuperFence({ name, isDark, langRenderer: new MermaidRenderer() });
+  return SuperFence({ name, isDark, langRenderer: new OpenAPIRenderer() });
 }

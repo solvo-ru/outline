@@ -34,7 +34,7 @@ class PlantUMLRenderer extends Renderer {
 
     try {
       const zippedCode = PlantUmlEncoder.encode(text);
-      const plantServerUrl = `${env.PLANTUML_SERVER_URL}/plantuml/svg/${zippedCode}`;
+      const plantServerUrl = `${env.PLANTUML_SERVER_URL}/svg/${zippedCode}`;
       const svgContent = await fetchSVGContent(plantServerUrl);
       this.currentTextContent = text;
       if (text) {

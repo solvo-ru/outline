@@ -1,7 +1,7 @@
 /* eslint-disable no-irregular-whitespace */
 import { lighten, transparentize } from "polished";
 import React from "react";
-import styled, { DefaultTheme, css, keyframes } from "styled-components";
+import styled, { css, DefaultTheme, keyframes } from "styled-components";
 import { EditorStyleHelper } from "../styles/EditorStyleHelper";
 import { videoStyle } from "./Video";
 
@@ -1198,8 +1198,9 @@ mark {
 
 .code-block {
   position: relative;
-}
+} 
 
+.code-block[data-language=openapi],
 .code-block[data-language=plantuml],
 .code-block[data-language=mermaid] {
   margin: 0.75em 0;
@@ -1228,7 +1229,8 @@ mark {
 }
 
 /* Hide code without display none so toolbar can still be positioned against it */
-.ProseMirror[contenteditable="false"] .code-block[data-language=plantuml],
+    .ProseMirror[contenteditable="false"] .code-block[data-language=openapi],
+    .ProseMirror[contenteditable="false"] .code-block[data-language=plantuml],
 .ProseMirror[contenteditable="false"] .code-block[data-language=mermaid]{
   height: ${props.staticHTML ? "auto" : "0"};
   margin: -0.5em 0;
@@ -1259,7 +1261,8 @@ mark {
     user-select: none;
   }
 }
-
+    
+.openapi-wrapper,
 .plantuml-wrapper,
 .mermaid-wrapper {
   display: flex;
@@ -1718,6 +1721,7 @@ table {
 }
 
 .folded-content,
+.folded-content + .openapi-wrapper, 
 .folded-content + .plantuml-wrapper, 
 .folded-content + .mermaid-wrapper {
   display: none;

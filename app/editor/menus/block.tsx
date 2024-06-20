@@ -1,25 +1,25 @@
 import {
+  AttachmentIcon,
   BlockQuoteIcon,
   BulletedListIcon,
+  CalendarIcon,
+  ClockIcon,
   CodeIcon,
+  DoneIcon,
+  EmbedIcon,
   Heading1Icon,
   Heading2Icon,
   Heading3Icon,
   HorizontalRuleIcon,
+  ImageIcon,
+  InfoIcon,
+  MathIcon,
   OrderedListIcon,
   PageBreakIcon,
+  StarredIcon,
   TableIcon,
   TodoListIcon,
-  ImageIcon,
-  StarredIcon,
   WarningIcon,
-  InfoIcon,
-  AttachmentIcon,
-  ClockIcon,
-  CalendarIcon,
-  MathIcon,
-  DoneIcon,
-  EmbedIcon,
 } from "outline-icons";
 import * as React from "react";
 import styled from "styled-components";
@@ -211,6 +211,13 @@ export default function blockMenuItems(dictionary: Dictionary): MenuItem[] {
       icon: <Img src="/images/plantuml.png" alt="PlantUML Diagram" />,
       keywords: "diagram flowchart",
       attrs: { language: "plantuml" },
+    },
+    {
+      name: "code_block",
+      title: "OpenAPI Specification",
+      icon: <Img src="/images/openapi.png" alt="OpenAPIDoc" />,
+      keywords: "swagger stoplight api",
+      attrs: { language: "openapi" },
     },
   ];
 }
