@@ -1,6 +1,6 @@
 import "@stoplight/elements/styles.min.css";
 
-import { API } from "@stoplight/elements/containers/API";
+import { API } from "@stoplight/elements";
 import React from "react";
 import { hydrate } from "react-dom";
 import { renderToString } from "react-dom/server";

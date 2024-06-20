@@ -142,8 +142,6 @@ export default () =>
       webpackStats(),
     ],
     optimizeDeps: {
-      include
-        : ['@stoplight/elements'],
       esbuildOptions: {
         keepNames: true,
         define: {
@@ -158,9 +156,6 @@ export default () =>
       },
     },
     build: {
-      commonjsOptions:{
-        include:[/@stoplight\/elements/, /node_modules/],
-      },
       outDir: "./build/app",
       manifest: true,
       sourcemap: true,
