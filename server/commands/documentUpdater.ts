@@ -67,6 +67,7 @@ export default async function documentUpdater({
   }
   if (emoji !== undefined) {
     document.emoji = emoji;
+    document.icon = emoji;
   }
   if (editorVersion) {
     document.editorVersion = editorVersion;
@@ -136,5 +137,9 @@ export default async function documentUpdater({
     });
   }
 
-  return document;
+  return await Document.findByPk(document.id, {
+    userId: user.id,
+    rejectOnEmpty: true,
+    transaction,
+  });
 }
