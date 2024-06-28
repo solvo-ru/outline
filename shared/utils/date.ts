@@ -9,26 +9,8 @@ import {
   subYears,
 } from "date-fns";
 import {
-  cs,
-  de,
   enUS,
-  es,
-  faIR,
-  fr,
-  it,
-  ja,
-  ko,
-  nb,
-  nl,
-  ptBR,
-  pt,
-  pl,
-  sv,
-  tr,
-  vi,
-  uk,
-  zhCN,
-  zhTW,
+  ru
 } from "date-fns/locale";
 import type { DateFilter } from "../types";
 
@@ -161,26 +143,8 @@ export function getCurrentDateTimeAsString(locale?: Intl.LocalesArgument) {
 }
 
 const locales = {
-  cs_CZ: cs,
-  de_DE: de,
   en_US: enUS,
-  es_ES: es,
-  fa_IR: faIR,
-  fr_FR: fr,
-  it_IT: it,
-  ja_JP: ja,
-  ko_KR: ko,
-  nb_NO: nb,
-  nl_NL: nl,
-  pt_BR: ptBR,
-  pt_PT: pt,
-  pl_PL: pl,
-  sv_SE: sv,
-  tr_TR: tr,
-  uk_UA: uk,
-  vi_VN: vi,
-  zh_CN: zhCN,
-  zh_TW: zhTW,
+  ru_RU: ru,
 };
 
 /**
