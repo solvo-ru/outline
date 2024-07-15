@@ -19,5 +19,3 @@ data/*
 .yarn*
 !/.eslintignore
 !/.eslintrc
-shared/i18n/locales
-!shared/i18n/en_US

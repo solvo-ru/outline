@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Dockerfile.base" type="docker-deploy" factoryName="dockerfile" server-name="Docker (local)">
+  <configuration default="false" name="Dockerfile.base" type="docker-deploy" factoryName="dockerfile" server-name="moarse">
     <deployment type="dockerfile">
       <settings>
         <option name="imageTag" value="solvo-ru/solvo-outline-base" />
