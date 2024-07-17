@@ -588,6 +588,19 @@ export class Environment {
   @Public
   public APP_NAME = "Outline";
 
+
+  /**
+   * The PlantUML server url.
+   */
+  @Public
+  @IsNotEmpty()
+  @IsUrl({
+    require_tld: false,
+    allow_underscores: true
+  })
+  public PLANTUML_SERVER_URL = environment.PLANTUML_SERVER_URL ?? "https://www.plantuml.com";
+
+
   /**
    * Returns true if the current installation is the cloud hosted version at
    * getoutline.com

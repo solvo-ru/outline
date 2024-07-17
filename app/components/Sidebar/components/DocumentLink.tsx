@@ -14,13 +14,14 @@ import { DocumentValidation } from "@shared/validations";
 import Collection from "~/models/Collection";
 import Document from "~/models/Document";
 import Fade from "~/components/Fade";
+import Icon from "~/components/Icon";
 import NudeButton from "~/components/NudeButton";
 import Tooltip from "~/components/Tooltip";
 import useBoolean from "~/hooks/useBoolean";
 import usePolicy from "~/hooks/usePolicy";
 import useStores from "~/hooks/useStores";
 import DocumentMenu from "~/menus/DocumentMenu";
-import { newDocumentPath } from "~/utils/routeHelpers";
+import { newNestedDocumentPath } from "~/utils/routeHelpers";
 import DropCursor from "./DropCursor";
 import DropToImport from "./DropToImport";
 import EditableTitle, { RefHandle } from "./EditableTitle";
@@ -142,6 +143,8 @@ function InnerDocumentLink(
   const isMoving = documents.movingDocumentId === node.id;
   const manualSort = collection?.sort.field === "index";
   const can = policies.abilities(node.id);
+  const icon = document?.icon || node.icon || node.emoji;
+  const color = document?.color || node.color;
 
   // Draggable
   const [{ isDragging }, drag, preview] = useDrag({
@@ -149,6 +152,7 @@ function InnerDocumentLink(
     item: () => ({
       ...node,
       depth,
+      icon: icon ? <Icon value={icon} color={color} /> : undefined,
       active: isActiveDocument,
       collectionId: collection?.id || "",
     }),
@@ -324,7 +328,7 @@ function InnerDocumentLink(
                     starred: inStarredSection,
                   },
                 }}
-                emoji={document?.emoji || node.emoji}
+                icon={icon && <Icon value={icon} color={color} />}
                 label={
                   <EditableTitle
                     title={title}
@@ -359,9 +363,7 @@ function InnerDocumentLink(
                             type={undefined}
                             aria-label={t("New nested document")}
                             as={Link}
-                            to={newDocumentPath(document.collectionId, {
-                              parentDocumentId: document.id,
-                            })}
+                            to={newNestedDocumentPath(document.id)}
                           >
                             <PlusIcon />
                           </NudeButton>

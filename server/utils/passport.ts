@@ -2,7 +2,7 @@ import crypto from "crypto";
 import { addMinutes, subMinutes } from "date-fns";
 import type { Context } from "koa";
 // Allowed for trusted server<->server connections
-// eslint-disable-next-line no-restricted-imports
+ 
 import fetch from "node-fetch";
 import {
   StateStoreStoreCallback,

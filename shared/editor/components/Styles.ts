@@ -858,14 +858,16 @@ h6 {
   opacity: 1;
 }
 
-.comment-marker {
-  border-bottom: 2px solid ${props.theme.commentMarkBackground};
-  transition: background 100ms ease-in-out;
-  border-radius: 2px;
+.${EditorStyleHelper.comment} {
+  &:not([data-resolved]) {
+    border-bottom: 2px solid ${props.theme.commentMarkBackground};
+    transition: background 100ms ease-in-out;
+    border-radius: 2px;
 
-  &:hover {
-    ${props.readOnly ? "cursor: var(--pointer);" : ""}
-    background: ${props.theme.commentMarkBackground};
+    &:hover {
+      ${props.readOnly ? "cursor: var(--pointer);" : ""}
+      background: ${props.theme.commentMarkBackground};
+    }
   }
 }
 
@@ -1201,7 +1203,7 @@ mark {
 }
 
 .code-block[data-language=plantuml],
-.code-block[data-language=mermaidjs] {
+.code-block[data-language=mermaid] {
   margin: 0.75em 0;
 
   ${
@@ -1229,7 +1231,7 @@ mark {
 
 /* Hide code without display none so toolbar can still be positioned against it */
 .ProseMirror[contenteditable="false"] .code-block[data-language=plantuml],
-.ProseMirror[contenteditable="false"] .code-block[data-language=mermaidjs]{
+.ProseMirror[contenteditable="false"] .code-block[data-language=mermaid]{
   height: ${props.staticHTML ? "auto" : "0"};
   margin: -0.5em 0;
   overflow: hidden;
@@ -1260,8 +1262,8 @@ mark {
   }
 }
 
-.plantuml-diagram-wrapper,
-.mermaid-diagram-wrapper {
+.plantuml-wrapper,
+.mermaid-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1718,8 +1720,8 @@ table {
 }
 
 .folded-content,
-.folded-content + .plantuml-diagram-wrapper, 
-.folded-content + .mermaid-diagram-wrapper {
+.folded-content + .plantuml-wrapper, 
+.folded-content + .mermaid-wrapper {
   display: none;
   user-select: none;
 }
@@ -1773,7 +1775,7 @@ del[data-operation-index] {
     page-break-inside: avoid;
   }
 
-  .comment-marker {
+  .${EditorStyleHelper.comment} {
     border: 0;
     background: none;
   }

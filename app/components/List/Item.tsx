@@ -4,10 +4,12 @@ import {
 } from "@getoutline/react-roving-tabindex";
 import { LocationDescriptor } from "history";
 import * as React from "react";
+import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import styled, { useTheme } from "styled-components";
 import { s, ellipsis } from "@shared/styles";
 import Flex from "~/components/Flex";
 import NavLink from "~/components/NavLink";
+import { hover } from "~/styles";
 
 export type Props = Omit<React.HTMLAttributes<HTMLAnchorElement>, "title"> & {
   /** An icon or image to display to the left of the list item */
@@ -16,6 +18,8 @@ export type Props = Omit<React.HTMLAttributes<HTMLAnchorElement>, "title"> & {
   to?: LocationDescriptor;
   /** An optional click handler, if provided the list item will have hover styles */
   onClick?: React.MouseEventHandler<HTMLAnchorElement>;
+  /** An optional keydown handler, if provided the list item will have hover styles */
+  onKeyDown?: React.KeyboardEventHandler<HTMLAnchorElement>;
   /** Whether to match the location exactly */
   exact?: boolean;
   /** The title of the list item */
@@ -28,26 +32,49 @@ export type Props = Omit<React.HTMLAttributes<HTMLAnchorElement>, "title"> & {
   border?: boolean;
   /** Whether to display the list item in a compact style */
   small?: boolean;
+  /** Whether to enable keyboard navigation */
+  keyboardNavigation?: boolean;
 };
 
 const ListItem = (
-  { image, title, subtitle, actions, small, border, to, ...rest }: Props,
-  ref?: React.Ref<HTMLAnchorElement>
+  {
+    image,
+    title,
+    subtitle,
+    actions,
+    small,
+    border,
+    to,
+    keyboardNavigation,
+    ...rest
+  }: Props,
+  ref: React.RefObject<HTMLAnchorElement>
 ) => {
   const theme = useTheme();
   const compact = !subtitle;
 
-  let itemRef: React.Ref<HTMLAnchorElement> =
+  let itemRef: React.RefObject<HTMLAnchorElement> =
     React.useRef<HTMLAnchorElement>(null);
   if (ref) {
     itemRef = ref;
   }
 
   const { focused, ...rovingTabIndex } = useRovingTabIndex(
-    itemRef as React.RefObject<HTMLAnchorElement>,
-    to ? false : true
+    itemRef,
+    keyboardNavigation || to ? false : true
   );
-  useFocusEffect(focused, itemRef as React.RefObject<HTMLAnchorElement>);
+  useFocusEffect(focused, itemRef);
+
+  const handleFocus = React.useCallback(() => {
+    if (itemRef.current) {
+      scrollIntoView(itemRef.current, {
+        scrollMode: "if-needed",
+        behavior: "auto",
+        block: "center",
+        boundary: window.document.body,
+      });
+    }
+  }, [itemRef]);
 
   const content = (selected: boolean) => (
     <>
@@ -89,6 +116,16 @@ const ListItem = (
           }
           rovingTabIndex.onClick(ev);
         }}
+        onKeyDown={(ev) => {
+          if (rest.onKeyDown) {
+            rest.onKeyDown(ev);
+          }
+          rovingTabIndex.onKeyDown(ev);
+        }}
+        onFocus={(ev) => {
+          rovingTabIndex.onFocus(ev);
+          handleFocus();
+        }}
         as={NavLink}
         to={to}
       >
@@ -98,7 +135,26 @@ const ListItem = (
   }
 
   return (
-    <Wrapper ref={itemRef} $border={border} $small={small} {...rest}>
+    <Wrapper
+      ref={itemRef}
+      $border={border}
+      $small={small}
+      $hover={!!rest.onClick}
+      {...rest}
+      {...rovingTabIndex}
+      onClick={(ev) => {
+        rest.onClick?.(ev);
+        rovingTabIndex.onClick(ev);
+      }}
+      onKeyDown={(ev) => {
+        rest.onKeyDown?.(ev);
+        rovingTabIndex.onKeyDown(ev);
+      }}
+      onFocus={(ev) => {
+        rovingTabIndex.onFocus(ev);
+        handleFocus();
+      }}
+    >
       {content(false)}
     </Wrapper>
   );
@@ -107,6 +163,7 @@ const ListItem = (
 const Wrapper = styled.a<{
   $small?: boolean;
   $border?: boolean;
+  $hover?: boolean;
   onClick?: React.MouseEventHandler<HTMLAnchorElement>;
   to?: LocationDescriptor;
 }>`
@@ -123,9 +180,15 @@ const Wrapper = styled.a<{
     border-bottom: 0;
   }
 
-  &:hover {
+  &:focus-visible {
+    outline: none;
+  }
+
+  &:${hover},
+  &:focus,
+  &:focus-within {
     background: ${(props) =>
-      props.onClick ? props.theme.secondaryBackground : "inherit"};
+      props.$hover ? props.theme.secondaryBackground : "inherit"};
   }
 
   cursor: ${(props) =>

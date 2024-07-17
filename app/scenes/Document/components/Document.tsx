@@ -19,9 +19,15 @@ import styled from "styled-components";
 import breakpoint from "styled-components-breakpoint";
 import { EditorStyleHelper } from "@shared/editor/styles/EditorStyleHelper";
 import { s } from "@shared/styles";
-import { NavigationNode, TOCPosition, TeamPreference } from "@shared/types";
+import {
+  IconType,
+  NavigationNode,
+  TOCPosition,
+  TeamPreference,
+} from "@shared/types";
 import { ProsemirrorHelper, Heading } from "@shared/utils/ProsemirrorHelper";
 import { parseDomain } from "@shared/utils/domains";
+import { determineIconType } from "@shared/utils/icon";
 import RootStore from "~/stores/RootStore";
 import Document from "~/models/Document";
 import Revision from "~/models/Revision";
@@ -30,7 +36,6 @@ import DocumentPublish from "~/scenes/DocumentPublish";
 import Branding from "~/components/Branding";
 import ConnectionStatus from "~/components/ConnectionStatus";
 import ErrorBoundary from "~/components/ErrorBoundary";
-import Flex from "~/components/Flex";
 import LoadingIndicator from "~/components/LoadingIndicator";
 import PageTitle from "~/components/PageTitle";
 import PlaceholderDocument from "~/components/PlaceholderDocument";
@@ -169,8 +174,11 @@ class DocumentScene extends React.Component<Props> {
       this.title = title;
       this.props.document.title = title;
     }
-    if (template.emoji) {
-      this.props.document.emoji = template.emoji;
+    if (template.icon) {
+      this.props.document.icon = template.icon;
+    }
+    if (template.color) {
+      this.props.document.color = template.color;
     }
 
     this.props.document.data = cloneDeep(template.data);
@@ -383,8 +391,9 @@ class DocumentScene extends React.Component<Props> {
     void this.autosave();
   });
 
-  handleChangeEmoji = action((value: string) => {
-    this.props.document.emoji = value;
+  handleChangeIcon = action((icon: string | null, color: string | null) => {
+    this.props.document.icon = icon;
+    this.props.document.color = color;
     void this.onSave();
   });
 
@@ -413,7 +422,7 @@ class DocumentScene extends React.Component<Props> {
 
     const hasHeadings = this.headings.length > 0;
     const showContents =
-      ui.tocVisible && ((readOnly && hasHeadings) || !readOnly);
+      ui.tocVisible === true || (isShare && ui.tocVisible !== false);
     const tocPos =
       tocPosition ??
       ((team?.getPreference(TeamPreference.TocPosition) as TOCPosition) ||
@@ -424,6 +433,12 @@ class DocumentScene extends React.Component<Props> {
     const canonicalUrl = shareId
       ? this.props.match.url
       : updateDocumentPath(this.props.match.url, document);
+
+    const hasEmojiInTitle = determineIconType(document.icon) === IconType.Emoji;
+    const title = hasEmojiInTitle
+      ? document.titleWithDefault.replace(document.icon!, "")
+      : document.titleWithDefault;
+    const favicon = hasEmojiInTitle ? emojiToUrl(document.icon!) : undefined;
 
     return (
       <ErrorBoundary showTitle>
@@ -459,10 +474,7 @@ class DocumentScene extends React.Component<Props> {
           column
           auto
         >
-          <PageTitle
-            title={document.titleWithDefault.replace(document.emoji || "", "")}
-            favicon={document.emoji ? emojiToUrl(document.emoji) : undefined}
-          />
+          <PageTitle title={title} favicon={favicon} />
           {(this.isUploading || this.isSaving) && <LoadingIndicator />}
           <Container column>
             {!readOnly && (
@@ -491,16 +503,23 @@ class DocumentScene extends React.Component<Props> {
               onSave={this.onSave}
               headings={this.headings}
             />
-            <Flex justify="center">
-              <Notices document={document} readOnly={readOnly} />
-            </Flex>
             <MeasuredContainer
               as={Main}
               name="document"
               fullWidth={document.fullWidth}
-              tocPosition={tocPosition}
+              tocPosition={tocPos}
             >
-              <React.Suspense fallback={<PlaceholderDocument />}>
+              <React.Suspense
+                fallback={
+                  <EditorContainer
+                    docFullWidth={document.fullWidth}
+                    showContents={showContents}
+                    tocPosition={tocPos}
+                  >
+                    <PlaceholderDocument />
+                  </EditorContainer>
+                }
+              >
                 {revision ? (
                   <RevisionContainer docFullWidth={document.fullWidth}>
                     <RevisionViewer
@@ -524,6 +543,8 @@ class DocumentScene extends React.Component<Props> {
                       showContents={showContents}
                       tocPosition={tocPos}
                     >
+                      <Notices document={document} readOnly={readOnly} />
+
                       <Editor
                         id={document.id}
                         key={embedsDisabled ? "disabled" : "enabled"}
@@ -542,7 +563,7 @@ class DocumentScene extends React.Component<Props> {
                         onSearchLink={this.props.onSearchLink}
                         onCreateLink={this.props.onCreateLink}
                         onChangeTitle={this.handleChangeTitle}
-                        onChangeEmoji={this.handleChangeEmoji}
+                        onChangeIcon={this.handleChangeIcon}
                         onChange={this.handleChange}
                         onHeadingsChange={this.onHeadingsChange}
                         onSave={this.onSave}
@@ -627,9 +648,9 @@ type ContentsContainerProps = {
 };
 
 const ContentsContainer = styled.div<ContentsContainerProps>`
-  margin-top: calc(44px + 6vh);
-
   ${breakpoint("tablet")`
+    margin-top: calc(44px + 6vh);
+
     grid-row: 1;
     grid-column: ${({ docFullWidth, position }: ContentsContainerProps) =>
       position === TOCPosition.Left ? 1 : docFullWidth ? 2 : 3};
@@ -646,7 +667,7 @@ type EditorContainerProps = {
 
 const EditorContainer = styled.div<EditorContainerProps>`
   // Adds space to the gutter to make room for icon & heading annotations
-  padding: 0 44px;
+  padding: 0 40px;
 
   ${breakpoint("tablet")`
     grid-row: 1;
@@ -673,7 +694,7 @@ type RevisionContainerProps = {
 
 const RevisionContainer = styled.div<RevisionContainerProps>`
   // Adds space to the gutter to make room for icon
-  padding: 0 44px;
+  padding: 0 40px;
 
   ${breakpoint("tablet")`
     grid-row: 1;

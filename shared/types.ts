@@ -13,6 +13,11 @@ export enum StatusFilter {
   Draft = "draft",
 }
 
+export enum CommentStatusFilter {
+  Resolved = "resolved",
+  Unresolved = "unresolved",
+}
+
 export enum Client {
   Web = "web",
   Desktop = "desktop",
@@ -230,6 +235,8 @@ export type NavigationNode = {
   title: string;
   url: string;
   emoji?: string;
+  icon?: string;
+  color?: string;
   children: NavigationNode[];
   isDraft?: boolean;
   collectionId?: string;
@@ -404,4 +411,44 @@ export type ProsemirrorData = {
 export type ProsemirrorDoc = {
   type: "doc";
   content: ProsemirrorData[];
+};
+
+export enum IconType {
+  SVG = "svg",
+  Emoji = "emoji",
+}
+
+export enum EmojiCategory {
+  People = "People",
+  Nature = "Nature",
+  Foods = "Foods",
+  Activity = "Activity",
+  Places = "Places",
+  Objects = "Objects",
+  Symbols = "Symbols",
+  Flags = "Flags",
+}
+
+export enum EmojiSkinTone {
+  Default = "Default",
+  Light = "Light",
+  MediumLight = "MediumLight",
+  Medium = "Medium",
+  MediumDark = "MediumDark",
+  Dark = "Dark",
+}
+
+export type Emoji = {
+  id: string;
+  name: string;
+  value: string;
+};
+
+export type EmojiVariants = {
+  [EmojiSkinTone.Default]: Emoji;
+  [EmojiSkinTone.Light]?: Emoji;
+  [EmojiSkinTone.MediumLight]?: Emoji;
+  [EmojiSkinTone.Medium]?: Emoji;
+  [EmojiSkinTone.MediumDark]?: Emoji;
+  [EmojiSkinTone.Dark]?: Emoji;
 };

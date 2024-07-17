@@ -221,7 +221,7 @@ export class MarkdownSerializerState {
           return info && info.expelEnclosingWhitespace;
         })
       ) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+         
         const [, lead, inner, trail] = /^(\s*)(.*?)(\s*)$/m.exec(node.text);
         leading += lead;
         trailing = trail;

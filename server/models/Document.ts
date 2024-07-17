@@ -64,6 +64,7 @@ import View from "./View";
 import ParanoidModel from "./base/ParanoidModel";
 import Fix from "./decorators/Fix";
 import { DocumentHelper } from "./helpers/DocumentHelper";
+import IsHexColor from "./validators/IsHexColor";
 import Length from "./validators/Length";
 
 export const DOCUMENT_VERSION = 2;
@@ -254,13 +255,29 @@ class Document extends ParanoidModel<
   @Column
   editorVersion: string;
 
-  /** An emoji to use as the document icon. */
+  /**
+   * An emoji to use as the document icon,
+   * This is used as fallback (for backward compat) when icon is not set.
+   */
   @Length({
-    max: 1,
-    msg: `Emoji must be a single character`,
+    max: 50,
+    msg: `Emoji must be 50 characters or less`,
   })
   @Column
   emoji: string | null;
+
+  /** An icon to use as the document icon. */
+  @Length({
+    max: 50,
+    msg: `icon must be 50 characters or less`,
+  })
+  @Column
+  icon: string | null;
+
+  /** The color of the icon. */
+  @IsHexColor
+  @Column
+  color: string | null;
 
   /**
    * The content of the document as Markdown.
@@ -352,7 +369,11 @@ class Document extends ParanoidModel<
       model.archivedAt ||
       model.template ||
       !model.publishedAt ||
-      !(model.changed("title") || model.changed("emoji")) ||
+      !(
+        model.changed("title") ||
+        model.changed("icon") ||
+        model.changed("color")
+      ) ||
       !model.collectionId
     ) {
       return;
@@ -708,6 +729,8 @@ class Document extends ParanoidModel<
     this.text = revision.text;
     this.title = revision.title;
     this.emoji = revision.emoji;
+    this.icon = revision.icon;
+    this.color = revision.color;
   };
 
   /**
@@ -785,37 +808,8 @@ class Document extends ParanoidModel<
     return findAllChildDocumentIds(this.id);
   };
 
-  archiveWithChildren = async (
-    userId: string,
-    options?: FindOptions<Document>
-  ) => {
-    const archivedAt = new Date();
-
-    // Helper to archive all child documents for a document
-    const archiveChildren = async (parentDocumentId: string) => {
-      const childDocuments = await (
-        this.constructor as typeof Document
-      ).findAll({
-        where: {
-          parentDocumentId,
-        },
-      });
-      for (const child of childDocuments) {
-        await archiveChildren(child.id);
-        child.archivedAt = archivedAt;
-        child.lastModifiedById = userId;
-        await child.save(options);
-      }
-    };
-
-    await archiveChildren(this.id);
-    this.archivedAt = archivedAt;
-    this.lastModifiedById = userId;
-    return this.save(options);
-  };
-
   publish = async (
-    userId: string,
+    user: User,
     collectionId: string,
     { transaction }: SaveOptions<Document>
   ) => {
@@ -837,7 +831,9 @@ class Document extends ParanoidModel<
 
       if (collection) {
         await collection.addDocumentToStructure(this, 0, { transaction });
-        this.collection = collection;
+        if (this.collection) {
+          this.collection.documentStructure = collection.documentStructure;
+        }
       }
     }
 
@@ -867,7 +863,8 @@ class Document extends ParanoidModel<
       )
     );
 
-    this.lastModifiedById = userId;
+    this.lastModifiedById = user.id;
+    this.updatedBy = user;
     this.publishedAt = new Date();
     return this.save({ transaction });
   };
@@ -888,9 +885,8 @@ class Document extends ParanoidModel<
     return false;
   };
 
-  unpublish = async (userId: string) => {
-    // If the document is already a draft then calling unpublish should act like
-    // a regular save
+  unpublish = async (user: User) => {
+    // If the document is already a draft then calling unpublish should act like save
     if (!this.publishedAt) {
       return this.save();
     }
@@ -905,21 +901,25 @@ class Document extends ParanoidModel<
 
       if (collection) {
         await collection.removeDocumentInStructure(this, { transaction });
-        this.collection = collection;
+        if (this.collection) {
+          this.collection.documentStructure = collection.documentStructure;
+        }
       }
     });
 
     // unpublishing a document converts the ownership to yourself, so that it
     // will appear in your drafts rather than the original creators
-    this.createdById = userId;
-    this.lastModifiedById = userId;
+    this.createdById = user.id;
+    this.lastModifiedById = user.id;
+    this.createdBy = user;
+    this.updatedBy = user;
     this.publishedAt = null;
     return this.save();
   };
 
   // Moves a document from being visible to the team within a collection
   // to the archived area, where it can be subsequently restored.
-  archive = async (userId: string) => {
+  archive = async (user: User) => {
     await this.sequelize.transaction(async (transaction: Transaction) => {
       const collection = this.collectionId
         ? await Collection.findByPk(this.collectionId, {
@@ -930,16 +930,18 @@ class Document extends ParanoidModel<
 
       if (collection) {
         await collection.removeDocumentInStructure(this, { transaction });
-        this.collection = collection;
+        if (this.collection) {
+          this.collection.documentStructure = collection.documentStructure;
+        }
       }
     });
 
-    await this.archiveWithChildren(userId);
+    await this.archiveWithChildren(user);
     return this;
   };
 
   // Restore an archived document back to being visible to the team
-  unarchive = async (userId: string) => {
+  unarchive = async (user: User) => {
     await this.sequelize.transaction(async (transaction: Transaction) => {
       const collection = this.collectionId
         ? await Collection.findByPk(this.collectionId, {
@@ -965,7 +967,9 @@ class Document extends ParanoidModel<
         await collection.addDocumentToStructure(this, undefined, {
           transaction,
         });
-        this.collection = collection;
+        if (this.collection) {
+          this.collection.documentStructure = collection.documentStructure;
+        }
       }
     });
 
@@ -974,13 +978,14 @@ class Document extends ParanoidModel<
     }
 
     this.archivedAt = null;
-    this.lastModifiedById = userId;
+    this.lastModifiedById = user.id;
+    this.updatedBy = user;
     await this.save();
     return this;
   };
 
   // Delete a document, archived or otherwise.
-  delete = (userId: string) =>
+  delete = (user: User) =>
     this.sequelize.transaction(async (transaction: Transaction) => {
       if (!this.archivedAt && !this.template && this.collectionId) {
         // delete any children and remove from the document structure
@@ -1002,15 +1007,10 @@ class Document extends ParanoidModel<
         },
         transaction,
       });
-      await this.update(
-        {
-          lastModifiedById: userId,
-        },
-        {
-          transaction,
-        }
-      );
-      return this;
+
+      this.lastModifiedById = user.id;
+      this.updatedBy = user;
+      return this.save({ transaction });
     });
 
   getTimestamp = () => Math.round(new Date(this.updatedAt).getTime() / 1000);
@@ -1070,8 +1070,41 @@ class Document extends ParanoidModel<
       title: this.title,
       url: this.url,
       emoji: isNil(this.emoji) ? undefined : this.emoji,
+      icon: isNil(this.icon) ? undefined : this.icon,
+      color: isNil(this.color) ? undefined : this.color,
       children,
     };
+  };
+
+  private archiveWithChildren = async (
+    user: User,
+    options?: FindOptions<Document>
+  ) => {
+    const archivedAt = new Date();
+
+    // Helper to archive all child documents for a document
+    const archiveChildren = async (parentDocumentId: string) => {
+      const childDocuments = await (
+        this.constructor as typeof Document
+      ).findAll({
+        where: {
+          parentDocumentId,
+        },
+      });
+      for (const child of childDocuments) {
+        await archiveChildren(child.id);
+        child.archivedAt = archivedAt;
+        child.lastModifiedById = user.id;
+        child.updatedBy = user;
+        await child.save(options);
+      }
+    };
+
+    await archiveChildren(this.id);
+    this.archivedAt = archivedAt;
+    this.lastModifiedById = user.id;
+    this.updatedBy = user;
+    return this.save(options);
   };
 }
 

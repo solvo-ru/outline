@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+ 
 import crypto from "crypto";
 import { Server } from "https";
 import Koa from "koa";

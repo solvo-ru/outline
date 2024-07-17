@@ -9,7 +9,7 @@ import uniq from "lodash/uniq";
 import mime from "mime-types";
 import { Op, ScopeOptions, Sequelize, WhereOptions } from "sequelize";
 import { v4 as uuidv4 } from "uuid";
-import { StatusFilter, TeamPreference, UserRole } from "@shared/types";
+import { TeamPreference, UserRole } from "@shared/types";
 import { subtractDate } from "@shared/utils/date";
 import slugify from "@shared/utils/slugify";
 import documentCreator from "@server/commands/documentCreator";
@@ -97,7 +97,10 @@ router.post(
     };
 
     if (template) {
-      where = { ...where, template: true };
+      where = {
+        ...where,
+        template: true,
+      };
     }
 
     // if a specific user is passed then add to filters. If the user doesn't
@@ -552,7 +555,6 @@ router.post(
     if (accept?.includes("text/html")) {
       contentType = "text/html";
       content = await DocumentHelper.toHTML(document, {
-        signedUrls: true,
         centered: true,
         includeMermaid: true,
       });
@@ -676,14 +678,10 @@ router.post(
       );
     }
 
-    if (document.collection) {
-      authorize(user, "updateDocument", collection);
-    }
-
     if (document.deletedAt) {
       authorize(user, "restore", document);
       // restore a previously deleted document
-      await document.unarchive(user.id);
+      await document.unarchive(user);
       await Event.createFromContext(ctx, {
         name: "documents.restore",
         documentId: document.id,
@@ -695,7 +693,7 @@ router.post(
     } else if (document.archivedAt) {
       authorize(user, "unarchive", document);
       // restore a previously archived document
-      await document.unarchive(user.id);
+      await document.unarchive(user);
       await Event.createFromContext(ctx, {
         name: "documents.unarchive",
         documentId: document.id,
@@ -791,28 +789,17 @@ router.post(
       userId,
       dateFilter,
       statusFilter = [],
-      includeArchived,
-      includeDrafts,
       shareId,
       snippetMinWords,
       snippetMaxWords,
     } = ctx.input.body;
     const { offset, limit } = ctx.state.pagination;
-
-    // Unfortunately, this still doesn't adequately handle cases when auth is optional
     const { user } = ctx.state.auth;
-
-    // TODO: Deprecated filter options, remove in a few versions
-    if (includeArchived && !statusFilter.includes(StatusFilter.Archived)) {
-      statusFilter.push(StatusFilter.Archived);
-    }
-    if (includeDrafts && !statusFilter.includes(StatusFilter.Draft)) {
-      statusFilter.push(StatusFilter.Draft);
-    }
 
     let teamId;
     let response;
     let share;
+    let isPublic = false;
 
     if (shareId) {
       const teamFromCtx = await getTeamFromContext(ctx);
@@ -823,6 +810,7 @@ router.post(
       });
 
       share = loaded.share;
+      isPublic = cannot(user, "read", document);
 
       if (!share?.includeChildDocuments) {
         throw InvalidRequestError("Child documents cannot be searched");
@@ -892,7 +880,9 @@ router.post(
 
     const data = await Promise.all(
       results.map(async (result) => {
-        const document = await presentDocument(ctx, result.document);
+        const document = await presentDocument(ctx, result.document, {
+          isPublic,
+        });
         return { ...result, document };
       })
     );
@@ -946,6 +936,8 @@ router.post(
         createdById: user.id,
         template: true,
         emoji: original.emoji,
+        icon: original.icon,
+        color: original.color,
         title: original.title,
         text: original.text,
         content: original.content,
@@ -998,7 +990,7 @@ router.post(
     const { user } = ctx.state.auth;
     let collection: Collection | null | undefined;
 
-    const document = await Document.findByPk(id, {
+    let document = await Document.findByPk(id, {
       userId: user.id,
       includeState: true,
       transaction,
@@ -1024,13 +1016,26 @@ router.post(
           method: ["withMembership", user.id],
         }).findByPk(collectionId!, { transaction });
       }
-      authorize(user, "createDocument", collection);
+
+      if (document.parentDocumentId) {
+        const parentDocument = await Document.findByPk(
+          document.parentDocumentId,
+          {
+            userId: user.id,
+            transaction,
+          }
+        );
+        authorize(user, "createChildDocument", parentDocument, { collection });
+      } else {
+        authorize(user, "createDocument", collection);
+      }
     }
 
-    await documentUpdater({
+    document = await documentUpdater({
       document,
       user,
       ...input,
+      icon: input.icon ?? input.emoji ?? null,
       publish,
       collectionId,
       insightsEnabled,
@@ -1039,18 +1044,9 @@ router.post(
       ip: ctx.request.ip,
     });
 
-    collection = document.collectionId
-      ? await Collection.scope({
-          method: ["withMembership", user.id],
-        }).findByPk(document.collectionId, { transaction })
-      : null;
-
-    document.updatedBy = user;
-    document.collection = collection;
-
     ctx.body = {
       data: await presentDocument(ctx, document),
-      policies: presentPolicies(user, [document, collection]),
+      policies: presentPolicies(user, [document]),
     };
   }
 );
@@ -1186,7 +1182,7 @@ router.post(
     });
     authorize(user, "archive", document);
 
-    await document.archive(user.id);
+    await document.archive(user);
     await Event.createFromContext(ctx, {
       name: "documents.archive",
       documentId: document.id,
@@ -1234,7 +1230,7 @@ router.post(
 
       authorize(user, "delete", document);
 
-      await document.delete(user.id);
+      await document.delete(user);
       await Event.createFromContext(ctx, {
         name: "documents.delete",
         documentId: document.id,
@@ -1275,7 +1271,7 @@ router.post(
       );
     }
 
-    await document.unpublish(user.id);
+    await document.unpublish(user);
     await Event.createFromContext(ctx, {
       name: "documents.unpublish",
       documentId: document.id,
@@ -1381,6 +1377,8 @@ router.post(
       title,
       text,
       emoji,
+      icon,
+      color,
       publish,
       collectionId,
       parentDocumentId,
@@ -1396,7 +1394,29 @@ router.post(
 
     let collection;
 
-    if (collectionId) {
+    let parentDocument;
+
+    if (parentDocumentId) {
+      parentDocument = await Document.findByPk(parentDocumentId, {
+        userId: user.id,
+      });
+
+      if (parentDocument?.collectionId) {
+        collection = await Collection.scope({
+          method: ["withMembership", user.id],
+        }).findOne({
+          where: {
+            id: parentDocument.collectionId,
+            teamId: user.teamId,
+          },
+          transaction,
+        });
+      }
+
+      authorize(user, "createChildDocument", parentDocument, {
+        collection,
+      });
+    } else if (collectionId) {
       collection = await Collection.scope({
         method: ["withMembership", user.id],
       }).findOne({
@@ -1407,17 +1427,6 @@ router.post(
         transaction,
       });
       authorize(user, "createDocument", collection);
-    }
-
-    let parentDocument;
-
-    if (parentDocumentId) {
-      parentDocument = await Document.findByPk(parentDocumentId, {
-        userId: user.id,
-      });
-      authorize(user, "read", parentDocument, {
-        collection,
-      });
     }
 
     let templateDocument: Document | null | undefined;
@@ -1433,10 +1442,11 @@ router.post(
     const document = await documentCreator({
       title,
       text,
-      emoji,
+      icon: icon ?? emoji,
+      color,
       createdAt,
       publish,
-      collectionId,
+      collectionId: collection?.id,
       parentDocumentId,
       templateDocument,
       template,

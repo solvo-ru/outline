@@ -285,14 +285,20 @@ export class ProsemirrorHelper {
     doc.descendants((node) => {
       node.marks.forEach((mark) => {
         if (mark.type.name === "link") {
-          urls.push(mark.attrs.href);
+          if (mark.attrs.href) {
+            urls.push(mark.attrs.href);
+          }
         }
       });
       if (["image", "video"].includes(node.type.name)) {
-        urls.push(node.attrs.src);
+        if (node.attrs.src) {
+          urls.push(node.attrs.src);
+        }
       }
       if (node.type.name === "attachment") {
-        urls.push(node.attrs.href);
+        if (node.attrs.href) {
+          urls.push(node.attrs.href);
+        }
       }
     });
 
@@ -403,7 +409,7 @@ export class ProsemirrorHelper {
     // Inject mermaidjs scripts if the document contains mermaid diagrams
     if (options?.includeMermaid) {
       const mermaidElements = dom.window.document.querySelectorAll(
-        `[data-language="mermaidjs"] pre code`
+        `[data-language="mermaid"] pre code`
       );
 
       // Unwrap <pre> tags to enable Mermaid script to correctly render inner content

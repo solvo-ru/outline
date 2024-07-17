@@ -5,6 +5,7 @@ node_modules/*
 .env.local
 .env.production
 .log
+yarn-error.log
 .vscode/*
 npm-debug.log
 stats.json
@@ -16,3 +17,5 @@ data/*
 *.cert
 .github/workflows/main.yaml
 .yarn*
+!/.eslintignore
+!/.eslintrc

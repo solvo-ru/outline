@@ -13,6 +13,7 @@ import {
 import styled from "styled-components";
 import breakpoint from "styled-components-breakpoint";
 import { s } from "@shared/styles";
+import { colorPalette } from "@shared/utils/collections";
 import Collection from "~/models/Collection";
 import Search from "~/scenes/Search";
 import { Action } from "~/components/Actions";
@@ -20,6 +21,7 @@ import Badge from "~/components/Badge";
 import CenteredContent from "~/components/CenteredContent";
 import CollectionDescription from "~/components/CollectionDescription";
 import Heading from "~/components/Heading";
+import Icon, { IconTitleWrapper } from "~/components/Icon";
 import CollectionIcon from "~/components/Icons/CollectionIcon";
 import InputSearchPage from "~/components/InputSearchPage";
 import PlaceholderList from "~/components/List/Placeholder";
@@ -43,6 +45,8 @@ import Empty from "./components/Empty";
 import MembershipPreview from "./components/MembershipPreview";
 import ShareButton from "./components/ShareButton";
 
+const IconPicker = React.lazy(() => import("~/components/IconPicker"));
+
 function CollectionScene() {
   const params = useParams<{ id?: string }>();
   const history = useHistory();
@@ -59,6 +63,13 @@ function CollectionScene() {
   const collection: Collection | null | undefined =
     collections.getByUrl(id) || collections.get(id);
   const can = usePolicy(collection);
+
+  const handleIconChange = React.useCallback(
+    async (icon: string | null, color: string | null) => {
+      await collection?.save({ icon, color });
+    },
+    [collection]
+  );
 
   React.useEffect(() => {
     setLastVisitedPath(currentPath);
@@ -119,6 +130,14 @@ function CollectionScene() {
     return <Search notFound />;
   }
 
+  const fallbackIcon = collection ? (
+    <Icon
+      value={collection.icon ?? "collection"}
+      color={collection.color || undefined}
+      size={40}
+    />
+  ) : null;
+
   return collection ? (
     <Scene
       // Forced mount prevents animation of pinned documents when navigating
@@ -163,8 +182,24 @@ function CollectionScene() {
             <Empty collection={collection} />
           ) : (
             <>
-              <HeadingWithIcon>
-                <HeadingIcon collection={collection} size={40} expanded />
+              <CollectionHeading>
+                <IconTitleWrapper>
+                  {can.update ? (
+                    <React.Suspense fallback={fallbackIcon}>
+                      <IconPicker
+                        icon={collection.icon ?? "collection"}
+                        color={collection.color ?? colorPalette[0]}
+                        initial={collection.name[0]}
+                        size={40}
+                        popoverPosition="bottom-start"
+                        onChange={handleIconChange}
+                        borderOnHover
+                      />
+                    </React.Suspense>
+                  ) : (
+                    fallbackIcon
+                  )}
+                </IconTitleWrapper>
                 {collection.name}
                 {collection.isPrivate &&
                   !FeatureFlags.isEnabled(Feature.newCollectionSharing) && (
@@ -177,7 +212,7 @@ function CollectionScene() {
                       <Badge>{t("Private")}</Badge>
                     </Tooltip>
                   )}
-              </HeadingWithIcon>
+              </CollectionHeading>
 
               <PinnedDocuments
                 pins={pins.inCollection(collection.id)}
@@ -296,18 +331,15 @@ const Documents = styled.div`
   background: ${s("background")};
 `;
 
-const HeadingWithIcon = styled(Heading)`
+const CollectionHeading = styled(Heading)`
   display: flex;
   align-items: center;
+  position: relative;
+  margin-left: 40px;
 
   ${breakpoint("tablet")`
-    margin-left: -40px;
-  `};
-`;
-
-const HeadingIcon = styled(CollectionIcon)`
-  align-self: flex-start;
-  flex-shrink: 0;
+    margin-left: 0;
+  `}
 `;
 
 export default observer(CollectionScene);

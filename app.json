@@ -210,6 +210,10 @@
       "value": "en_US",
       "description": "The default interface language. See translate.getoutline.com for a list of available language codes and their rough percentage translated.",
       "required": false
+    },
+    "PLANTUML_SERVER_URL": {
+      "value": "https://www.plantuml.com",
+      "required": false
     }
   }
 }

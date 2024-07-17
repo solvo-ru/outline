@@ -24,8 +24,9 @@ import {
   useDocumentContext,
   useEditingFocus,
 } from "~/components/DocumentContext";
+import Flex from "~/components/Flex";
 import Header from "~/components/Header";
-import EmojiIcon from "~/components/Icons/EmojiIcon";
+import Icon from "~/components/Icon";
 import Star from "~/components/Star";
 import Tooltip from "~/components/Tooltip";
 import { publishDocument } from "~/actions/definitions/documents";
@@ -118,17 +119,25 @@ function DocumentHeader({
   const { isDeleted, isTemplate } = document;
   const can = usePolicy(document);
   const canToggleEmbeds = team?.documentEmbeds;
+  const isShare = !!shareId;
+  const showContents =
+    ui.tocVisible === true || (isShare && ui.tocVisible !== false);
+
   const toc = (
     <Tooltip
-      content={ui.tocVisible ? t("Hide contents") : t("Show contents")}
+      content={
+        showContents
+          ? t("Hide contents")
+          : documentHasHeadings
+          ? t("Show contents")
+          : `${t("Show contents")} (${t("available when headings are added")})`
+      }
       shortcut="ctrl+alt+h"
       delay={250}
       placement="bottom"
     >
       <Button
-        onClick={
-          ui.tocVisible ? ui.hideTableOfContents : ui.showTableOfContents
-        }
+        onClick={showContents ? ui.hideTableOfContents : ui.showTableOfContents}
         icon={<TableOfContentsIcon />}
         borderOnHover
         neutral
@@ -189,7 +198,14 @@ function DocumentHeader({
     return (
       <StyledHeader
         $hidden={isEditingFocus}
-        title={document.title}
+        title={
+          <Flex gap={4}>
+            {document.icon && (
+              <Icon value={document.icon} color={document.color ?? undefined} />
+            )}
+            {document.title}
+          </Flex>
+        }
         hasSidebar={sharedTree && sharedTree.children?.length > 0}
         left={
           isMobile ? (
@@ -229,17 +245,13 @@ function DocumentHeader({
           )
         }
         title={
-          <>
-            {document.emoji && (
-              <>
-                <EmojiIcon size={24} emoji={document.emoji} />{" "}
-              </>
+          <Flex gap={4} align="center">
+            {document.icon && (
+              <Icon value={document.icon} color={document.color ?? undefined} />
             )}
-            {document.title}{" "}
-            {document.isArchived && (
-              <ArchivedBadge>{t("Archived")}</ArchivedBadge>
-            )}
-          </>
+            {document.title}
+            {document.isArchived && <Badge>{t("Archived")}</Badge>}
+          </Flex>
         }
         actions={
           <>
@@ -371,10 +383,6 @@ function DocumentHeader({
 const StyledHeader = styled(Header)<{ $hidden: boolean }>`
   transition: opacity 500ms ease-in-out;
   ${(props) => props.$hidden && "opacity: 0;"}
-`;
-
-const ArchivedBadge = styled(Badge)`
-  position: absolute;
 `;
 
 const Status = styled(Action)`

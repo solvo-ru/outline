@@ -12,7 +12,8 @@ type Props = Optional<
     | "title"
     | "text"
     | "content"
-    | "emoji"
+    | "icon"
+    | "color"
     | "collectionId"
     | "parentDocumentId"
     | "importId"
@@ -36,13 +37,15 @@ type Props = Optional<
 export default async function documentCreator({
   title = "",
   text = "",
-  emoji,
+  icon,
+  color,
   state,
   id,
   urlId,
   publish,
   collectionId,
   parentDocumentId,
+  content,
   template,
   templateDocument,
   fullWidth,
@@ -96,7 +99,9 @@ export default async function documentCreator({
       importId,
       sourceMetadata,
       fullWidth: templateDocument ? templateDocument.fullWidth : fullWidth,
-      emoji: templateDocument ? templateDocument.emoji : emoji,
+      emoji: templateDocument ? templateDocument.emoji : icon,
+      icon: templateDocument ? templateDocument.emoji : icon,
+      color: templateDocument ? templateDocument.color : color,
       title: TextHelper.replaceTemplateVariables(
         templateDocument ? templateDocument.title : title,
         user
@@ -115,7 +120,7 @@ export default async function documentCreator({
             templateDocument.content,
             user
           )
-        : undefined,
+        : content,
       state,
     },
     {
@@ -147,7 +152,7 @@ export default async function documentCreator({
       throw new Error("Collection ID is required to publish");
     }
 
-    await document.publish(user.id, collectionId, { transaction });
+    await document.publish(user, collectionId, { transaction });
     await Event.create(
       {
         name: "documents.publish",
