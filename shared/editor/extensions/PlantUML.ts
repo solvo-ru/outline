@@ -34,7 +34,7 @@ class PlantUMLRenderer extends Renderer {
 
     try {
       const zippedCode = PlantUmlEncoder.encode(text);
-      const plantServerUrl = `${env.PLANTUML_SERVER_URL}/plantuml/svg/${zippedCode}`;
+      const plantServerUrl = `${env.PLANTUML_SERVER_URL}/svg/${zippedCode}`;
       const svgContent = await fetchSVGContent(plantServerUrl);
       this.currentTextContent = text;
       if (text) {
@@ -56,11 +56,6 @@ class PlantUMLRenderer extends Renderer {
   };
 }
 
-/*
-  This code find the decoration that overlap the most with a given node.
-  This will ensure we can find the best decoration that match the last change set
-  See: https://github.com/outline/outline/pull/5852/files#r1334929120
-*/
 export default function PlantUML({
   name,
   isDark,

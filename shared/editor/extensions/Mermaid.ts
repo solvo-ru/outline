@@ -5,7 +5,7 @@ import SuperFence, {
   Cache,
   Renderer,
   SuperFenceState,
-} from "@shared/editor/extensions/SuperFence";
+} from "./SuperFence";
 
 const MERMAID = "mermaid";
 
@@ -31,7 +31,7 @@ class MermaidRenderer extends Renderer{
     }
 
     try {
-      const { default: mermaid } = await import(MERMAID);
+      const { default: mermaid } = await import("mermaid");
       mermaid.mermaidAPI.setConfig({
         theme: isDark ? "dark" : "default",
       });
