@@ -564,7 +564,7 @@ const embeds: EmbedDescriptor[] = [
     keywords: "diagrams structurizr",
     hideToolbar: false,
     regexMatch: [
-      /^https:\/\/structurizr\.moarse\.ru\/(share|workspace)\/(\d+)\/diagrams[^#]*#([^/]+)(\/(\d+))?/,
+      /^https:\/\/structurizr\.solvo\.ru\/(share|workspace)\/(\d+)\/diagrams[^#]*#([^/]+)(\/(\d+))?/,
     ],
     icon: <Img src="/images/structurizr.png" alt="Structurizr" />,
     component: Structurizr,

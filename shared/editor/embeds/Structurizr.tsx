@@ -8,7 +8,7 @@ function Structurizr({ matches, ...props }: Props) {
   const d = matches[3];
   const h = matches[5] || "400";
 
-  const normalizedUrl = `https://structurizr.moarse.ru/embed/${w}?diagram=${d}&diagramSelector=false&iframe=${id}`;
+  const normalizedUrl = `https://structurizr.solvo.ru/embed/${w}?diagram=${d}&diagramSelector=false&iframe=${id}`;
 
   return (
     <Frame
