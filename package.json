@@ -157,7 +157,7 @@
     "passport-oauth2": "^1.8.0",
     "passport-slack-oauth2": "^1.2.0",
     "patch-package": "^7.0.2",
-    "pg": "^8.11.5",
+    "pg": "^8.12.0",
     "pg-tsquery": "^8.4.2",
     "plantuml-encoder": "^1.4.0",
     "pluralize": "^8.0.0",
@@ -176,7 +176,7 @@
     "prosemirror-state": "^1.4.3",
     "prosemirror-tables": "^1.3.7",
     "prosemirror-transform": "^1.9.0",
-    "prosemirror-view": "^1.33.8",
+    "prosemirror-view": "^1.33.9",
     "query-string": "^7.1.3",
     "randomstring": "1.3.0",
     "rate-limiter-flexible": "^2.4.2",
@@ -360,6 +360,6 @@
     "qs": "6.9.7",
     "rollup": "^4.5.1"
   },
-  "version": "0.78.0-solvo2",
+  "version": "0.78.0-solvo3",
   "packageManager": "yarn@1.22.22"
 }

@@ -17,43 +17,18 @@ class PlantUMLRenderer extends Renderer {
     super(PLANT_UML);
   }
 
-  renderImmediately = async (
-    block: { node: Node; pos: number },
-    isDark: boolean
-  ) => {
-    const element = this.element;
-    const text = block.node.textContent;
-
-    const cacheKey = `${isDark ? "dark" : "light"}-${text}`;
-    const cache = Cache.get(cacheKey);
-    if (cache) {
-      element.classList.remove("parse-error", "empty");
-      element.innerHTML = cache;
-      return;
-    }
-
-    try {
-      const zippedCode = PlantUmlEncoder.encode(text);
-      const plantServerUrl = `${env.PLANTUML_SERVER_URL}/svg/${zippedCode}`;
-      const svgContent = await fetchSVGContent(plantServerUrl);
-      this.currentTextContent = text;
-      if (text) {
-        Cache.set(cacheKey, svgContent);
-      }
-      element.classList.remove("parse-error", "empty");
-      element.innerHTML = svgContent;
-    } catch (error) {
-      const isEmpty = block.node.textContent.trim().length === 0;
-
-      if (isEmpty) {
-        element.innerText = "Empty diagram";
-        element.classList.add("empty");
-      } else {
-        element.innerText = error;
-        element.classList.add("parse-error");
-      }
-    }
-  };
+  protected async renderContent(
+      text: string,
+      isDark: boolean
+  ): Promise<{
+    svg: string;
+    bindFunctions?: (element: HTMLElement) => void;
+  }> {
+    const zippedCode = PlantUmlEncoder.encode(text);
+    const plantServerUrl = `${env.PLANTUML_SERVER_URL}/svg/${zippedCode}`;
+    const svgContent = await fetchSVGContent(plantServerUrl);
+    return { svg: svgContent };
+  }
 }
 
 export default function PlantUML({
