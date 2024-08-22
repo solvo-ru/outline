@@ -441,6 +441,7 @@ router.post(
     const isPublic = cannot(user, "read", document);
     const serializedDocument = await presentDocument(ctx, document, {
       isPublic,
+      shareId,
     });
 
     const team = await document.$get("team");
@@ -884,13 +885,14 @@ router.post(
       });
     }
 
-    const { results, totalCount } = response;
+    const { results, total } = response;
     const documents = results.map((result) => result.document);
 
     const data = await Promise.all(
       results.map(async (result) => {
         const document = await presentDocument(ctx, result.document, {
           isPublic,
+          shareId,
         });
         return { ...result, document };
       })
@@ -905,12 +907,12 @@ router.post(
         shareId: share?.id,
         source: ctx.state.auth.type || "app", // we'll consider anything that isn't "api" to be "app"
         query,
-        results: totalCount,
+        results: total,
       });
     }
 
     ctx.body = {
-      pagination: ctx.state.pagination,
+      pagination: { ...ctx.state.pagination, total },
       data,
       policies: user ? presentPolicies(user, documents) : null,
     };
@@ -1054,7 +1056,6 @@ router.post(
       document,
       user,
       ...input,
-      icon: input.icon ?? null,
       publish,
       collectionId,
       insightsEnabled,
