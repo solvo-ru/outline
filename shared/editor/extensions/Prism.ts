@@ -39,6 +39,7 @@ export const LANGUAGES = {
   plantuml: "PlantUML",
   powershell: "Powershell",
   python: "Python",
+  r: "R",
   ruby: "Ruby",
   rust: "Rust",
   scala: "Scala",
