@@ -5,6 +5,10 @@ export const languageOptions = [
     label: "English (US)",
     value: "en_US",
   },
+  {
+    label: "Русский",
+    value: "ru_RU",
+  },
 ];
 
 export const languages = languageOptions.map((i) => i.value);

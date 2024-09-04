@@ -7,14 +7,15 @@ RUN export NODE_OPTIONS=--max-old-space-size=8192
 COPY ./package.json ./yarn.lock ./
 COPY ./patches ./patches
 
-ARG PROXY=http://cache.solvo.ru:3128/
-RUN yarn config set https-proxy $PROXY -g
-RUN yarn config set http-proxy $PROXY -g
-RUN cat > /etc/apt/apt.conf.d/80_proxy <<EOF
-    Acquire::http::Proxy "$PROXY";
-    Acquire::https::Proxy "$PROXY";
-    Acquire::ftp::Proxy "$PROXY";
-EOF
+ARG HTTP_PROXY
+RUN if [ -n "$HTTP_PROXY" ]; then \
+    yarn config set https-proxy $HTTP_PROXY -g && \
+    yarn config set http-proxy $HTTP_PROXY -g && \
+    echo "Acquire::http::Proxy \"$HTTP_PROXY\";" > /etc/apt/apt.conf.d/80_proxy && \
+    echo "Acquire::https::Proxy \"$HTTP_PROXY\";" >> /etc/apt/apt.conf.d/80_proxy && \
+    echo "Acquire::ftp::Proxy \"$HTTP_PROXY\";" >> /etc/apt/apt.conf.d/80_proxy \
+; fi
+
 
 RUN  apt-get update \
   && apt-get install -y wget \
