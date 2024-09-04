@@ -445,7 +445,7 @@ const embeds: EmbedDescriptor[] = [
     keywords: "post",
     defaultHidden: true,
     regexMatch: [
-      /^https:\/\/www\.linkedin\.com\/(?:posts\/.*-(ugcPost|activity)-(\d+)-.*|(embed)\/(?:feed\/update\/urn:li:(?:ugcPost|share):(?:\d+)))/,
+      /^https:\/\/www\.linkedin\.com\/(?:posts\/.*-(ugcPost|activity)-(\d+)-.*|(embed)\/(?:feed\/update\/urn:li:(?:ugcPost|share):\d+))/,
     ],
     icon: <Img src="/images/linkedin.png" alt="LinkedIn" />,
     component: Linkedin,
@@ -570,7 +570,7 @@ const embeds: EmbedDescriptor[] = [
     keywords: "diagrams structurizr",
     hideToolbar: false,
     regexMatch: [
-      /^https:\/\/structurizr\.solvo\.ru\/(share|workspace)\/(\d+)\/diagrams[^#]*#([^/]+)(\/(\d+))?/,
+      /^\s*(https?:\/\/)([^/\s]+)\/(share|workspace)\/(\d+)\/diagrams[^#]*#([^/]+)(\/(\d+))?/,
     ],
     icon: <Img src="/images/structurizr.png" alt="Structurizr" />,
     component: Structurizr,
