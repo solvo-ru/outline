@@ -3,7 +3,6 @@ FROM node:20-slim AS deps
 
 ARG APP_PATH
 WORKDIR $APP_PATH
-RUN export NODE_OPTIONS=--max-old-space-size=8192
 COPY ./package.json ./yarn.lock ./
 COPY ./patches ./patches
 
@@ -17,10 +16,6 @@ RUN if [ -n "$HTTP_PROXY" ]; then \
 ; fi
 
 
-RUN  apt-get update \
-  && apt-get install -y wget \
-  && rm -rf /var/lib/apt/lists/*
-RUN yarn config list
 RUN yarn install --no-optional --frozen-lockfile --network-timeout 1000000 && \
   yarn cache clean
 
@@ -34,4 +29,3 @@ RUN yarn install --production=true --frozen-lockfile --network-timeout 1000000 &
   yarn cache clean
 
 ENV PORT=3000
-HEALTHCHECK CMD wget -qO- http://localhost:${PORT}/_health | grep -q "OK" || exit 1
