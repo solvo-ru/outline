@@ -306,6 +306,8 @@
   "Suspended": "Приостановлено",
   "Invited": "Приглашен",
   "Leave": "Покинуть",
+  "{{ count }} groups added to the document": "{{ count }} группа добавлена в документ",
+  "{{ count }} groups added to the document_plural": "{{ count }} группы добавлено в документ",
   "Can view": "Может просматривать",
   "Everyone in the collection": "Все в коллекции",
   "You have full access": "У вас есть полный доступ",
