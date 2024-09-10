@@ -83,6 +83,7 @@ export default () =>
         injectRegister: "inline",
         registerType: "autoUpdate",
         workbox: {
+          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
           globPatterns: ["**/*.{js,css,ico,png,svg}"],
           navigateFallback: null,
           modifyURLPrefix: {
