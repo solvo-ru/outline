@@ -625,6 +625,40 @@ export class Environment {
   })
   public PLANTUML_SERVER_URL = environment.PLANTUML_SERVER_URL ?? "https://www.plantuml.com";
 
+  /**
+   * The Kroki server url.
+   */
+  @Public
+  @IsNotEmpty()
+  @IsUrl({
+    require_tld: false,
+    allow_underscores: true
+  })
+  public KROKI_SERVER_URL = environment.KROKI_SERVER_URL ?? "https://www.kroki.com";
+
+  /**
+   * Access key ID for AWS S3.
+   */
+  @IsOptional()
+  public STRUCTURIZR_S3_ACCESS_KEY = this.toOptionalString(
+      environment.STRUCTURIZR_S3_ACCESS_KEY
+  );
+
+  /**
+   * Secret key for AWS S3.
+   */
+  @IsOptional()
+  @CannotUseWithout("STRUCTURIZR_S3_ACCESS_KEY")
+  public STRUCTURIZR_S3_SECRET_KEY = this.toOptionalString(
+      environment.STRUCTURIZR_S3_SECRET_KEY
+  );
+
+  /**
+   * Optional AWS S3 endpoint URL for file attachments.
+   */
+  @Public
+  @IsOptional()
+  public STRUCTURIZR_S3_URL = environment.STRUCTURIZR_S3_URL ?? "";
 
   /**
    * Returns true if the current installation is the cloud hosted version at
