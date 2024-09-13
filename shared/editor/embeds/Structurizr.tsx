@@ -1,9 +1,10 @@
 import * as React from "react";
 import styled from "styled-components";
-import env from "@server/env";
-import {diagramToSvg, encodeDiagram, fetchStructurizrWorkspace} from "@server/utils/kroki"
+import env from "../../env";
+import {diagramToSvg, encodeDiagram, fetchStructurizrWorkspace} from "../../utils/kroki"
 import Frame from "../components/Frame";
 import { EmbedProps as Props } from ".";
+
 
 async function Structurizr({matches, ...props}: Props) {
   const id = `embed-${Math.floor(1000000 * Math.random())}`;
@@ -20,17 +21,27 @@ async function Structurizr({matches, ...props}: Props) {
 
   } else {
     const normalizedUrl = `${p}${n}/embed/${w}?diagram=${d}&diagramSelector=false&iframe=${id}`;
+    const scriptSrc = `${p}${n}/static/js/structurizr-embed.js`;
 
+    const StyledScript = <script
+        type="text/javascript"
+        src={scriptSrc}
+    />
     return (
+
         <Frame
             {...props}
             src={normalizedUrl}
             width="100%"
             height={`${h}px`}
             allowFullscreen
-            id={`${id}`}
-        />
-    );
+            id={id}
+            title="Structurizr"
+            extraScript={StyledScript}
+        >
+          {StyledScript}
+</Frame>
+    )
   }
 }
 

@@ -615,17 +615,6 @@ export class Environment {
 
 
   /**
-   * The PlantUML server url.
-   */
-  @Public
-  @IsNotEmpty()
-  @IsUrl({
-    require_tld: false,
-    allow_underscores: true
-  })
-  public PLANTUML_SERVER_URL = environment.PLANTUML_SERVER_URL ?? "https://www.plantuml.com";
-
-  /**
    * The Kroki server url.
    */
   @Public
@@ -637,11 +626,19 @@ export class Environment {
   public KROKI_SERVER_URL = environment.KROKI_SERVER_URL ?? "https://www.kroki.com";
 
   /**
+   * Optional AWS S3 endpoint URL for file attachments.
+   */
+  @Public
+  @IsOptional()
+  public STRUCTURIZR_S3_URL = environment.STRUCTURIZR_S3_URL;
+
+  /**
    * Access key ID for AWS S3.
    */
   @IsOptional()
+  @CannotUseWithout("STRUCTURIZR_S3_URL")
   public STRUCTURIZR_S3_ACCESS_KEY = this.toOptionalString(
-      environment.STRUCTURIZR_S3_ACCESS_KEY
+      environment.STRUCTURIZR_S3_ACCESS_KEY ?? this.AWS_ACCESS_KEY_ID
   );
 
   /**
@@ -650,15 +647,10 @@ export class Environment {
   @IsOptional()
   @CannotUseWithout("STRUCTURIZR_S3_ACCESS_KEY")
   public STRUCTURIZR_S3_SECRET_KEY = this.toOptionalString(
-      environment.STRUCTURIZR_S3_SECRET_KEY
+      environment.STRUCTURIZR_S3_SECRET_KEY ?? this.AWS_SECRET_ACCESS_KEY
   );
 
-  /**
-   * Optional AWS S3 endpoint URL for file attachments.
-   */
-  @Public
-  @IsOptional()
-  public STRUCTURIZR_S3_URL = environment.STRUCTURIZR_S3_URL ?? "";
+
 
   /**
    * Returns true if the current installation is the cloud hosted version at

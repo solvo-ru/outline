@@ -1,5 +1,5 @@
 import pako from "pako";
-import env from "@server/env";
+import env from "../env";
 
 type DiagramType =
     | 'actdiag'

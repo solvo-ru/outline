@@ -26,6 +26,9 @@ type Props = Omit<Optional<HTMLIFrameElement>, "children"> & {
   height?: string;
   /** The allow policy of the frame */
   allow?: string;
+  id?: string;
+  extraScript?:  React.JSX.Element;
+  children?: React.JSX.Element;
 };
 
 type PropsWithRef = Props & {
@@ -68,6 +71,9 @@ class Frame extends React.Component<PropsWithRef> {
       referrerPolicy,
       className = "",
       src,
+      id,
+      extraScript,
+      children,
     } = this.props;
     const withBar = !!(icon || canonicalUrl);
 
@@ -83,6 +89,7 @@ class Frame extends React.Component<PropsWithRef> {
       >
         {this.isLoaded && (
           <Iframe
+              id={id}
             ref={forwardedRef}
             $withBar={withBar}
             sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-downloads allow-storage-access-by-user-activation"
@@ -96,6 +103,8 @@ class Frame extends React.Component<PropsWithRef> {
             allowFullScreen
           />
         )}
+        {extraScript}
+        {children}
         {withBar && (
           <Bar>
             {icon} <Title>{title}</Title>
