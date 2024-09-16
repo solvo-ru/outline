@@ -3,7 +3,7 @@ build
 node_modules/*
 .env
 .env.local
-.env.production
+.env
 .log
 yarn-error.log
 .vscode/*

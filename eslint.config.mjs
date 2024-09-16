@@ -29,7 +29,7 @@ export default [
       "plugin:@typescript-eslint/recommended",
       "plugin:import/recommended",
       "plugin:import/typescript",
-      // "plugin:prettier/recommended"
+      "plugin:prettier/recommended"
     )
   ),
   {
@@ -194,14 +194,14 @@ export default [
           ],
         },
       ],
-/*
-      "prettier/prettier": [
+
+      "prettier/recommended": [
         "error",
         {
           printWidth: 80,
           trailingComma: "es5",
         },
-      ], */
+      ],
     },
   },
 ];
