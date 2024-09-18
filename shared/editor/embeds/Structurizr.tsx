@@ -1,7 +1,7 @@
 import * as React from "react";
 import env from "../../env";
 import Frame from "../components/Frame";
-import { StructurizrSVG } from "../components/StructurizrSVG";
+import StructurizrSVG from "../components/StructurizrSVG";
 import { EmbedProps as Props } from ".";
 
 function Structurizr({ matches, ...props }: Props) {
@@ -13,6 +13,7 @@ function Structurizr({ matches, ...props }: Props) {
 
   if (env.STRUCTURIZR_S3_URL) {
     return <StructurizrSVG
+        {...props}
         workspaceId={workspaceId}
         viewKey={viewKey}
     />;
