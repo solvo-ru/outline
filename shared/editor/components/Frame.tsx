@@ -27,7 +27,7 @@ type Props = Omit<Optional<HTMLIFrameElement>, "children"> & {
   /** The allow policy of the frame */
   allow?: string;
   id?: string;
-  extraScript?:  React.JSX.Element;
+  // extraScript?:  React.JSX.Element;
   children?: React.JSX.Element;
 };
 
@@ -72,7 +72,7 @@ class Frame extends React.Component<PropsWithRef> {
       className = "",
       src,
       id,
-      extraScript,
+      // extraScript,
       children,
     } = this.props;
     const withBar = !!(icon || canonicalUrl);
@@ -103,8 +103,8 @@ class Frame extends React.Component<PropsWithRef> {
             allowFullScreen
           />
         )}
-        {extraScript}
-        {children}
+        {/*{extraScript}*/}
+        {{children}}
         {withBar && (
           <Bar>
             {icon} <Title>{title}</Title>

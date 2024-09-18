@@ -495,7 +495,7 @@ export class Environment {
    * The name of the AWS S3 region to use.
    */
   @IsOptional()
-  public AWS_REGION = this.toOptionalString(environment.AWS_REGION);
+  public AWS_REGION = environment.AWS_REGION ?? "";
 
   /**
    * Optional AWS S3 endpoint URL for file attachments.
@@ -638,7 +638,7 @@ export class Environment {
   @IsOptional()
   @CannotUseWithout("STRUCTURIZR_S3_URL")
   public STRUCTURIZR_S3_ACCESS_KEY = this.toOptionalString(
-      environment.STRUCTURIZR_S3_ACCESS_KEY ?? this.AWS_ACCESS_KEY_ID
+      environment.STRUCTURIZR_S3_ACCESS_KEY ?? environment.AWS_ACCESS_KEY_ID
   );
 
   /**
@@ -647,7 +647,7 @@ export class Environment {
   @IsOptional()
   @CannotUseWithout("STRUCTURIZR_S3_ACCESS_KEY")
   public STRUCTURIZR_S3_SECRET_KEY = this.toOptionalString(
-      environment.STRUCTURIZR_S3_SECRET_KEY ?? this.AWS_SECRET_ACCESS_KEY
+      environment.STRUCTURIZR_S3_SECRET_KEY ?? environment.AWS_SECRET_ACCESS_KEY
   );
 
 

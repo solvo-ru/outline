@@ -32,3 +32,14 @@ export const FilesGetSchema = z.object({
 });
 
 export type FilesGetReq = z.infer<typeof FilesGetSchema>;
+
+
+export const StructurizrWorkspaceSchema = z.object({
+    query: z.object({
+        id: z.string(),
+    }).refine((obj) => !(isEmpty(obj.id) ), {
+        message: "workspace id is required",
+    }),
+});
+
+export type StructurizrWorkspaceReq = z.infer<typeof StructurizrWorkspaceSchema>;

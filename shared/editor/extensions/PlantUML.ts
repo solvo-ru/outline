@@ -2,7 +2,7 @@ import { Node } from "prosemirror-model";
 import { Plugin } from "prosemirror-state";
 import { DecorationSet } from "prosemirror-view";
 import SuperFence, { Cache, Renderer, SuperFenceState } from "./SuperFence";
-import {diagramToSvg, encodeDiagram} from "../../utils/kroki";
+import {diagramToSvg, encodeDiagram} from "./kroki/utils";
 
 const PLANT_UML = "plantuml";
 
@@ -28,7 +28,7 @@ class PlantUMLRenderer extends Renderer {
     }
 
     try {
-      const encodedText = encodeDiagram(await text);
+      const encodedText = encodeDiagram(text);
       const svgContent =await diagramToSvg(PLANT_UML, encodedText)
       this.currentTextContent = text;
       if (text) {
