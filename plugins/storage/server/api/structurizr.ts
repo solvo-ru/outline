@@ -31,6 +31,7 @@ structurizrRouter.post(
         console.log( `workspaceId is ${workspaceId}`);
 
       const workspaceJson = await getWorkspace(workspaceId);
+	Logger.silly("http",workspaceJson);
       ctx.body = await diagramToSvg<"structurizr">(
           "structurizr",
           workspaceJson,

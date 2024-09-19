@@ -39,6 +39,7 @@ export async function diagramToSvg<T extends DiagramType>(
         diagram_type: diagramType,
         output_format: "svg",
         diagram_options: diagramOptions,
+	log: console.error(diagramText+diagramType+JSON.stringify(diagramOptions)),
       }),
     });
 
