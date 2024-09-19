@@ -6,8 +6,9 @@ import styled from "styled-components";
 import { Optional } from "utility-types";
 import { s } from "../../styles";
 import { sanitizeUrl } from "../../utils/urls";
+import {ReactSVG} from "react-svg";
 
-export type Props = HTMLIFrameElement & {
+type Props = Optional<HTMLIFrameElement> & {
   /** The URL to load in the iframe */
   src?: string;
   /** Whether to display a border, defaults to true */
@@ -41,6 +42,7 @@ class Frame extends React.Component<PropsWithRef> {
   @observable
   isLoaded = false;
 
+
   componentDidMount() {
     this.mounted = true;
     setTimeout(this.loadIframe, 0);
@@ -71,11 +73,10 @@ class Frame extends React.Component<PropsWithRef> {
       className = "",
       src,
       id,
-      // extraScript,
-      children,
+      firstChild,
     } = this.props;
     const withBar = !!(icon || canonicalUrl);
-
+    const clearedSrc = sanitizeUrl(src) ?? "";
     return (
       <Rounded
         width={width}
@@ -86,7 +87,7 @@ class Frame extends React.Component<PropsWithRef> {
           isSelected ? `ProseMirror-selectednode ${className}` : className
         }
       >
-        {this.isLoaded && (
+        {this.isLoaded && id && (
           <Iframe
               id={id}
             ref={forwardedRef}
@@ -95,15 +96,18 @@ class Frame extends React.Component<PropsWithRef> {
             width={width}
             height={height}
             frameBorder="0"
-            title="embed"
+            title={title}
             loading="lazy"
-            src={sanitizeUrl(src)}
+            src={clearedSrc}
             referrerPolicy={referrerPolicy}
             allowFullScreen
           />
         )}
-        {/*{extraScript}*/}
-        {{children}}
+        {this.isLoaded && !id && (
+            <>
+        {firstChild}
+            </>
+        )}
         {withBar && (
           <Bar>
             {icon} <Title>{title}</Title>
@@ -123,16 +127,11 @@ class Frame extends React.Component<PropsWithRef> {
   }
 }
 
-const Iframe = styled(({ as: Component = 'iframe', $withBar, ...props }) => (
-    <Component {...props} />
-))<{ as?: React.ElementType; $withBar: boolean }>`
+
+const Iframe = styled.iframe<{ $withBar: boolean }>`
   border-radius: ${(props) => (props.$withBar ? "3px 3px 0 0" : "3px")};
   display: block;
 `;
-/*const Iframe = styled.iframe<{ $withBar: boolean }>`
-  border-radius: ${(props) => (props.$withBar ? "3px 3px 0 0" : "3px")};
-  display: block;
-`;*/
 
 const Rounded = styled.div<{
   width: string;

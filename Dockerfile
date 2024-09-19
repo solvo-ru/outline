@@ -7,7 +7,7 @@ WORKDIR $APP_PATH
 # ---
 FROM node:20-slim AS runner
 
-LABEL org.opencontainers.image.source="https://github.com/outline/outline"
+LABEL org.opencontainers.image.source="https://gitlab.solvo.ru/solvo/tool-forks/outline"
 
 ARG APP_PATH
 WORKDIR $APP_PATH
@@ -20,7 +20,7 @@ COPY --from=base $APP_PATH/.sequelizerc ./.sequelizerc
 COPY --from=base $APP_PATH/node_modules ./node_modules
 COPY --from=base $APP_PATH/package.json ./package.json
 
-#COPY --from=base /etc/apt/apt.conf.d/80_proxy /etc/apt/apt.conf.d/80_proxy
+COPY --from=base /etc/apt/apt.conf.d/80_proxy /etc/apt/apt.conf.d/80_proxy
 
 # Install wget to healthcheck the server
 RUN  apt-get update \

@@ -1,67 +1,69 @@
-import * as React from "react";
+import React, { useEffect } from 'react';
 import env from "../../env";
 import {sanitizeUrl} from "../../utils/urls";
-import  Frame, {Props as FrameProps}  from "../components/Frame";
-import Svg from "../components/Svg";
+import  Frame  from "../components/Frame";
 import { EmbedProps as Props } from ".";
-import {Optional} from "utility-types";
-import styled from "styled-components";
-
-
-
 
 function Structurizr({ matches, ...props }: Props) {
-  const p = matches[1];
-  const n = matches[2];
+  const structurizrDomain = matches[1]+matches[2];
+  const canonicalUrl = matches[0];
   const workspaceId = matches[4];
   const viewKey = matches[5];
-  const height = matches[6] ;
-
-  let params: FrameProps = {border: true, height: height,title: props.embed.title, icon: props.embed.icon, ...props};
+  const height = matches[6] ? matches[6]+"px" : "400px";
+  const parser = new DOMParser();
 
   if (env.STRUCTURIZR_S3_URL) {
-    const canonicalUrl = sanitizeUrl(`${env.URL}/structurizr.view?workspaceId=${workspaceId}&viewKey=${viewKey}`)??'';
-    params = {...params, canonicalUrl};
+    const svgEndpoint = `${env.URL}/api/structurizr.view`;
 
-  } else {
-    const id = `embed-${Math.floor(1000000 * Math.random())}`;
-    const src = sanitizeUrl(`${p}${n}/embed/${workspaceId}?diagram=${viewKey}&diagramSelector=false&iframe=${id}`)??'';
-    const scriptSrc = sanitizeUrl(`${p}${n}/static/js/structurizr-embed.js`);
-    const StyledScript = <script
-      type="text/javascript"
-      src={scriptSrc}/>;
-    params = {...params, src, id, children: StyledScript};
-    return (
-      <>
+    useEffect(() => {
+        const fetchSvg = async () => {
+            let svgElement = document.createElement('svg');
+            const response = await fetch(svgEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({workspaceId, viewKey})
+            });
+            const svgDoc = parser.parseFromString(await response.text(), 'image/svg+xml');
+            svgElement = svgDoc.documentElement;
+            document.body.appendChild(svgElement);
+            return () => {
+                document.body.removeChild(svgElement);
+            };
+        };
+        fetchSvg().catch(console.error);
+      }, [svgEndpoint, workspaceId, viewKey]);
+
+      return (
         <Frame
-          {...props}
-          src={normalizedUrl}
-          width="100%"
-          height={`${h}px`}
-          allowFullscreen
-          id={id}
-          // extraScript={StyledScript}
-        >
-          {StyledScript}
-        </Frame>
-        {StyledScript}
-      </>
+            {...props}
+            height={height}
+            border
+            canonicalUrl={canonicalUrl}
+        />
     );
   }
-  return (<Frame
-      {...props}
-      src={normalizedUrl}
-      width="100%"
-      height={`${h}px`}
-      allowFullscreen
-      id={id}
-      // extraScript={StyledScript}
-  >
-    {StyledScript}
-  </Frame>)
-}
+    const id = `embed-${Math.floor(1000000 * Math.random())}`;
+    const src = `${structurizrDomain}/embed/${workspaceId}?diagram=${viewKey}&diagramSelector=false&iframe=${id}`;
+    let scriptElement = document.createElement('script');
+    scriptElement.src = sanitizeUrl(`${structurizrDomain}/static/js/structurizr-embed.js`) ?? "";
+    scriptElement.type = "text/javascript" ;
 
-const StructurizrFrame({...props}: Props): {
+
+    return (
+        <>
+        <Frame
+          {...props}
+          src={src}
+          height={height}
+          allowFullscreen
+          id={id}
+          canonicalUrl={canonicalUrl}
+        />
+            {scriptElement}
+        </>
+    );
 
 }
 
