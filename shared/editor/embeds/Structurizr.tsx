@@ -1,7 +1,8 @@
 import * as React from "react";
 import env from "../../env";
+import {sanitizeUrl} from "../../utils/urls";
 import Frame from "../components/Frame";
-import StructurizrSVG from "../components/StructurizrSVG";
+import Svg from "../components/Svg";
 import { EmbedProps as Props } from ".";
 
 function Structurizr({ matches, ...props }: Props) {
@@ -12,15 +13,16 @@ function Structurizr({ matches, ...props }: Props) {
   const h = matches[6] || "400";
 
   if (env.STRUCTURIZR_S3_URL) {
-    return <StructurizrSVG
+    const svgUrl = sanitizeUrl(`${env.URL}/structurizr.view?workspaceId=${workspaceId}&viewKey=${viewKey}`);
+    return <Svg
         {...props}
-        workspaceId={workspaceId}
-        viewKey={viewKey}
+        endpoint={svgUrl}
+
     />;
   } else {
     const id = `embed-${Math.floor(1000000 * Math.random())}`;
-    const normalizedUrl = `${p}${n}/embed/${workspaceId}?diagram=${viewKey}&diagramSelector=false&iframe=${id}`;
-    const scriptSrc = `${p}${n}/static/js/structurizr-embed.js`;
+    const normalizedUrl = sanitizeUrl(`${p}${n}/embed/${workspaceId}?diagram=${viewKey}&diagramSelector=false&iframe=${id}`);
+    const scriptSrc = sanitizeUrl(`${p}${n}/static/js/structurizr-embed.js`);
     const StyledScript = <script type="text/javascript" src={scriptSrc} />;
     return (
       <>

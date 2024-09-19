@@ -124,10 +124,16 @@ class Frame extends React.Component<PropsWithRef> {
   }
 }
 
-const Iframe = styled.iframe<{ $withBar: boolean }>`
+const Iframe = styled(({ as: Component = 'iframe', $withBar, ...props }) => (
+    <Component {...props} />
+))<{ as?: React.ElementType; $withBar: boolean }>`
   border-radius: ${(props) => (props.$withBar ? "3px 3px 0 0" : "3px")};
   display: block;
 `;
+/*const Iframe = styled.iframe<{ $withBar: boolean }>`
+  border-radius: ${(props) => (props.$withBar ? "3px 3px 0 0" : "3px")};
+  display: block;
+`;*/
 
 const Rounded = styled.div<{
   width: string;

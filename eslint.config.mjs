@@ -195,7 +195,7 @@ export default [
         },
       ],
 
-      "prettier/recommended": [
+      "prettier/prettier": [
         "error",
         {
           printWidth: 80,

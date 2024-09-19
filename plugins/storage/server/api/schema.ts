@@ -43,3 +43,14 @@ export const StructurizrWorkspaceSchema = z.object({
 });
 
 export type StructurizrWorkspaceReq = z.infer<typeof StructurizrWorkspaceSchema>;
+
+export const StructurizrViewSchema =  z.object({
+    query: z.object({
+        workspaceId: z.string(),
+        viewKey: z.string(),
+    }).refine((obj) => (!isEmpty(obj.workspaceId) && !isEmpty(obj.viewKey)), {
+        message: "both workspace id and view key are required",
+    }),
+});
+
+export type StructurizrViewReq = z.infer<typeof StructurizrViewSchema>;

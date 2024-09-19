@@ -6,6 +6,7 @@ import Router from "koa-router";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import env from "@server/env";
 import Logger from "@server/logging/Logger";
+import { diagramToSvg } from "@shared/editor/extensions/kroki/utils";
 
 const structurizrRouter = new Router();
 
@@ -16,6 +17,24 @@ structurizrRouter.get(
     async (ctx: APIContext<T.StructurizrWorkspaceReq>) => {
         const  id = ctx.input.query.id;
         ctx.body  = await getWorkspace(id);
+    }
+);
+
+structurizrRouter.get(
+    "structurizr.view",
+    auth({ optional: true }),
+    validate(T.StructurizrViewSchema),
+    async (ctx: APIContext<T.StructurizrViewReq>) => {
+      const workspaceId = ctx.input.query.workspaceId;
+      const viewKey = ctx.input.query.viewKey;
+      const workspaceJson = await getWorkspace(workspaceId);
+      ctx.body = await diagramToSvg<"structurizr">(
+          "structurizr",
+          workspaceJson,
+          {
+            "view-key": viewKey,
+          }
+      );
     }
 );
 

@@ -20,7 +20,7 @@ COPY --from=base $APP_PATH/.sequelizerc ./.sequelizerc
 COPY --from=base $APP_PATH/node_modules ./node_modules
 COPY --from=base $APP_PATH/package.json ./package.json
 
-COPY --from=base /etc/apt/apt.conf.d/80_proxy /etc/apt/apt.conf.d/80_proxy
+#COPY --from=base /etc/apt/apt.conf.d/80_proxy /etc/apt/apt.conf.d/80_proxy
 
 # Install wget to healthcheck the server
 RUN  apt-get update \

@@ -2,7 +2,7 @@ export default {
   // Efficiently run prettier and translation updates on changes to JS and
   // TypeScript files
   "**/*.[tj]s?(x)": [
-    //(f) => (f.length > 20 ? `yarn lint --fix` : `eslint ${f.join(" ")} --fix`),
+   // (f) => (f.length > 20 ? `yarn lint --fix` : `eslint ${f.join(" ")} --fix`),
     () => `yarn build:i18n`,
     () => "git add shared/i18n/locales/en_US/translation.json",
   ],

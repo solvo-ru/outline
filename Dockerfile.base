@@ -5,15 +5,16 @@ ARG APP_PATH
 WORKDIR $APP_PATH
 COPY ./package.json ./yarn.lock ./
 COPY ./patches ./patches
-
-ARG HTTP_PROXY
-RUN if [ -n "$HTTP_PROXY" ]; then \
-    yarn config set https-proxy $HTTP_PROXY -g && \
-    yarn config set http-proxy $HTTP_PROXY -g && \
-    echo "Acquire::http::Proxy \"$HTTP_PROXY\";" > /etc/apt/apt.conf.d/80_proxy && \
-    echo "Acquire::https::Proxy \"$HTTP_PROXY\";" >> /etc/apt/apt.conf.d/80_proxy && \
-    echo "Acquire::ftp::Proxy \"$HTTP_PROXY\";" >> /etc/apt/apt.conf.d/80_proxy \
-; fi
+#
+#ARG HTTP_PROXY
+#
+#RUN if [ -n "$HTTP_PROXY" ]; then \
+#    yarn config set https-proxy $HTTP_PROXY -g && \
+#    yarn config set http-proxy $HTTP_PROXY -g && \
+#    echo "Acquire::http::Proxy \"$HTTP_PROXY\";" > /etc/apt/apt.conf.d/80_proxy && \
+#    echo "Acquire::https::Proxy \"$HTTP_PROXY\";" >> /etc/apt/apt.conf.d/80_proxy && \
+#    echo "Acquire::ftp::Proxy \"$HTTP_PROXY\";" >> /etc/apt/apt.conf.d/80_proxy \
+#; fi
 
 
 RUN yarn install --no-optional --frozen-lockfile --network-timeout 1000000 && \

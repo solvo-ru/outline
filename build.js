@@ -35,8 +35,8 @@ async function build() {
     execAsync("rm -rf ./build/plugins"),
   ]);
 
-  const d = getDirectories("./plugins");
-
+  //const d = getDirectories("./plugins");
+  const d = ['email','oidc','storage','webhooks']
   // Compile server and shared
   console.log("Compiling…");
   await Promise.all([

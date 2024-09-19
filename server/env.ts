@@ -495,7 +495,7 @@ export class Environment {
    * The name of the AWS S3 region to use.
    */
   @IsOptional()
-  public AWS_REGION = environment.AWS_REGION ?? "";
+  public AWS_REGION = environment.AWS_REGION ?? "eu-east-1";
 
   /**
    * Optional AWS S3 endpoint URL for file attachments.

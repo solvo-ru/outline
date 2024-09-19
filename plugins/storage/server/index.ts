@@ -12,7 +12,7 @@ import structurizrRouter from "./api/structurizr";
 if (env.STRUCTURIZR_S3_URL) {
   PluginManager.add([
     {
-      name: "Structurizr storage",
+      name: "Structurizr data",
       description: "Plugin for accessing Structurizr files",
       type: Hook.API,
       value: structurizrRouter,
