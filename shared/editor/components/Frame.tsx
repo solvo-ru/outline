@@ -7,7 +7,7 @@ import { Optional } from "utility-types";
 import { s } from "../../styles";
 import { sanitizeUrl } from "../../utils/urls";
 
-type Props = Omit<Optional<HTMLIFrameElement>, "children"> & {
+export type Props = HTMLIFrameElement & {
   /** The URL to load in the iframe */
   src?: string;
   /** Whether to display a border, defaults to true */
@@ -27,11 +27,10 @@ type Props = Omit<Optional<HTMLIFrameElement>, "children"> & {
   /** The allow policy of the frame */
   allow?: string;
   id?: string;
-  // extraScript?:  React.JSX.Element;
-  children?: React.JSX.Element;
+
 };
 
-type PropsWithRef = Props & {
+ type PropsWithRef = Props & {
   forwardedRef: React.Ref<HTMLIFrameElement>;
 };
 

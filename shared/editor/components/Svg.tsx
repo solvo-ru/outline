@@ -20,7 +20,7 @@ class Svg extends React.Component<PropsWithRef> {
         try {
           const response = await fetch(endpoint ?? "");
           if (!response.ok) throw new Error(`Network response was not ok: ${response.statusText}`);
-          const svgText = await response.text();
+          const svgText = await response.body;
           setSvgContent(svgText);
         } catch (err) {
           setError(err.message);
