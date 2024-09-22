@@ -18,9 +18,9 @@ export function encodeDiagram(diagramText: string): string {
 
 /**
  * Converts the diagram text to SVG by making a request to the Kroki server.
- * @param {<T>} diagramType - The type of the diagram.
+ * @param {T} diagramType - The type of the diagram.
  * @param {string} diagramText - The diagram text to convert.
- * @param {DiagramOptions} diagramOptions - Additional options for the diagram.
+ * @param {DiagramOptions<T>} diagramOptions - Additional options for the diagram.
  * @returns {Promise<string>} - The SVG representation of the diagram.
  */
 export async function diagramToSvg<T extends DiagramType>(
@@ -39,7 +39,6 @@ export async function diagramToSvg<T extends DiagramType>(
         diagram_type: diagramType,
         output_format: "svg",
         diagram_options: diagramOptions,
-	log: console.error(diagramText+diagramType+JSON.stringify(diagramOptions)),
       }),
     });
 

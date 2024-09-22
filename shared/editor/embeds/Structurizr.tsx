@@ -12,7 +12,7 @@ function Structurizr({ matches, ...props }: Props) {
   const height = matches[6] ? matches[6]+"px" : "400px";
   const parser = new DOMParser();
 
-  if (env.STRUCTURIZR_S3_URL) {
+  if (false && env.STRUCTURIZR_S3_URL) {
     const svgEndpoint = `${env.URL}/api/structurizr.view`;
 
     useEffect(() => {
