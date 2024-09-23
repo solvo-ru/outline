@@ -27,6 +27,7 @@ import Image from "@shared/editor/components/Img";
 import { MenuItem } from "@shared/editor/types";
 import { Dictionary } from "~/hooks/useDictionary";
 import { metaDisplay } from "~/utils/keyboard";
+import {krokiDiagrams} from "@shared/editor/extensions/kroki/types";
 
 const Img = styled(Image)`
   border-radius: 2px;
@@ -212,5 +213,14 @@ export default function blockMenuItems(dictionary: Dictionary): MenuItem[] {
       keywords: "diagram flowchart",
       attrs: { language: "plantuml" },
     },
+      ...Object.entries(krokiDiagrams).map(([key, value]) => {
+        return {
+          name: "code_block",
+          title: value,
+          icon: <Img src={`/images/${key}.png`} alt={value} />,
+          keywords: "diagram flowchart",
+          attrs: { language: key },
+        };
+      })
   ];
 }

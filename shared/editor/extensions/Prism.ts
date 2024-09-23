@@ -6,6 +6,7 @@ import { Decoration, DecorationSet } from "prosemirror-view";
 import refractor from "refractor/core";
 import { isRemoteTransaction } from "../lib/multiplayer";
 import { findBlockNodes } from "../queries/findChildren";
+import {krokiDiagrams} from "@shared/editor/extensions/kroki/types";
 
 export const LANGUAGES = {
   none: "Plain text", // additional entry to disable highlighting
@@ -31,14 +32,12 @@ export const LANGUAGES = {
   kotlin: "Kotlin",
   lisp: "Lisp",
   lua: "Lua",
-  mermaid: "Mermaid Diagram",
   nginx: "Nginx",
   nix: "Nix",
   objectivec: "Objective-C",
   ocaml: "OCaml",
   perl: "Perl",
   php: "PHP",
-  plantuml: "PlantUML",
   powershell: "Powershell",
   python: "Python",
   r: "R",
@@ -58,6 +57,7 @@ export const LANGUAGES = {
   vhdl: "VHDL",
   yaml: "YAML",
   zig: "Zig",
+  ...krokiDiagrams
 };
 
 type ParsedNode = {

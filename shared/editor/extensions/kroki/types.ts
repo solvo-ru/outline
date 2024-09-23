@@ -1,9 +1,34 @@
-export type DiagramType =
-    | "actdiag" | "blockdiag" | "bpmn" | "bytefield" | "c4plantuml" | "d2"
-    | "dbml" | "ditaa" | "erd" | "excalidraw" | "graphviz" | "mermaid"
-    | "nomnoml" | "nwdiag" | "packetdiag" | "pikchr" | "plantuml" | "rackdiag"
-    | "seqdiag" | "svgbob" | "symbolator" | "umlet" | "vega" | "vegalite"
-    | "wavedrom" | "structurizr" | "diagramsnet";
+export const krokiDiagrams: Record<string, string> = {
+  actdiag: "Actdiag Diagram",
+  blockdiag: "Blockdiag Diagram",
+  bpmn: "BPMN Diagram",
+  bytefield: "Bytefield Diagram",
+  c4plantuml: "C4PlantUML Diagram",
+  d2: "D2 Diagram",
+  dbml: "DBML Diagram",
+  ditaa: "Ditaa Diagram",
+  erd: "ERD Diagram",
+  excalidraw: "Excalidraw Diagram",
+  graphviz: "Graphviz Diagram",
+  mermaid: "Mermaid Diagram",
+  nomnoml: "Nomnoml Diagram",
+  nwdiag: "Nwdiag Diagram",
+  packetdiag: "Packetdiag Diagram",
+  pikchr: "Pikchr Diagram",
+  plantuml: "PlantUML Diagram",
+  rackdiag: "Rackdiag Diagram",
+  seqdiag: "Seqdiag Diagram",
+  svgbob: "Svgbob Diagram",
+  symbolator: "Symbolator Diagram",
+  umlet: "Umlet Diagram",
+  vega: "Vega Diagram",
+  vegalite: "Vegalite Diagram",
+  wavedrom: "Wavedrom Diagram",
+  structurizr: "Structurizr Diagram",
+  diagramsnet: "Diagrams.net Diagram",
+};
+
+export type DiagramType = keyof typeof krokiDiagrams;
 
 interface BaseOptions {
   scale?: number;

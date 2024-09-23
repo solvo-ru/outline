@@ -1,56 +1,41 @@
-import { fixupConfigRules, fixupPluginRules } from "@eslint/compat";
-import es from "eslint-plugin-es";
-import typescriptEslint from "@typescript-eslint/eslint-plugin";
-import _import from "eslint-plugin-import";
-import node from "eslint-plugin-node";
-import react from "eslint-plugin-react";
-import lodash from "eslint-plugin-lodash";
-import tsParser from "@typescript-eslint/parser";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
+const es = require("eslint-plugin-es");
+const typescriptEslint = require("@typescript-eslint/eslint-plugin");
+const _import = require("eslint-plugin-import");
+const node = require("eslint-plugin-node");
+const react = require("eslint-plugin-react");
+const lodash = require("eslint-plugin-lodash");
+const tsParser = require("@typescript-eslint/parser");
+const js = require("@eslint/js");
+const prettier = require("eslint-config-prettier");
+const prettierPlugin = require("eslint-plugin-prettier");
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
-});
-
-export default [
+module.exports = [
   {
     ignores: ["server/migrations/*.js"],
   },
-  ...fixupConfigRules(
-    compat.extends(
-      "eslint:recommended",
-      "plugin:@typescript-eslint/recommended",
-      "plugin:import/recommended",
-      "plugin:import/typescript",
-      "plugin:prettier/recommended"
-    )
-  ),
+  js.configs.recommended,
+  //typescriptEslint.configs.eslintrecommended,
+  _import.configs.recommended,
+  _import.configs.typescript,
+  prettier,
   {
     plugins: {
-      es: fixupPluginRules(es),
-      "@typescript-eslint": fixupPluginRules(typescriptEslint),
-      import: fixupPluginRules(_import),
-      node,
-      react: fixupPluginRules(react),
-      lodash,
+      es: es,
+      typescriptEslint: typescriptEslint,
+      import: _import,
+      node: node,
+      react: react,
+      lodash: lodash,
+      prettier: prettierPlugin
     },
 
     languageOptions: {
       parser: tsParser,
-      ecmaVersion: 5,
-      sourceType: "module",
-
+      ecmaVersion: 2020,
+      sourceType: "script",
       parserOptions: {
         extraFileExtensions: [".json"],
         project: "./tsconfig.json",
-
         ecmaFeatures: {
           jsx: true,
         },
@@ -84,7 +69,6 @@ export default [
       "no-useless-escape": "off",
       "no-shadow": "off",
       "es/no-regexp-lookbehind-assertions": "error",
-
       "react/self-closing-comp": [
         "error",
         {
@@ -195,7 +179,7 @@ export default [
         },
       ],
 
-      "prettier/prettier": [
+      'prettier/prettier': [
         "error",
         {
           printWidth: 80,

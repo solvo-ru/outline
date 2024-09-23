@@ -76,6 +76,7 @@ import { selectAll } from "../commands/selectAll";
 import toggleBlockType from "../commands/toggleBlockType";
 import Mermaid from "../extensions/Mermaid";
 import PlantUML from "../extensions/PlantUML";
+import DiagramAsCode from "../extensions/DiagramAsCode";
 import Prism from "../extensions/Prism";
 import { getRecentCodeLanguage, setRecentCodeLanguage } from "../lib/code";
 import { isCode } from "../lib/isCode";
@@ -272,6 +273,10 @@ export default class CodeFence extends Node {
         name: this.name,
         lineNumbers: this.showLineNumbers,
       }),
+        DiagramAsCode({
+          name: this.name,
+          isDark: this.editor.props.theme.isDark,
+        }),
       Mermaid({
         name: this.name,
         isDark: this.editor.props.theme.isDark,
