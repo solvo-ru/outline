@@ -495,7 +495,7 @@ export class Environment {
    * The name of the AWS S3 region to use.
    */
   @IsOptional()
-  public AWS_REGION = this.toOptionalString(environment.AWS_REGION);
+  public AWS_REGION = environment.AWS_REGION ?? "eu-east-1";
 
   /**
    * Optional AWS S3 endpoint URL for file attachments.
@@ -615,7 +615,7 @@ export class Environment {
 
 
   /**
-   * The PlantUML server url.
+   * The Kroki server url.
    */
   @Public
   @IsNotEmpty()
@@ -623,7 +623,33 @@ export class Environment {
     require_tld: false,
     allow_underscores: true
   })
-  public PLANTUML_SERVER_URL = environment.PLANTUML_SERVER_URL ?? "https://www.plantuml.com";
+  public KROKI_SERVER_URL = environment.KROKI_SERVER_URL ?? "https://www.kroki.com";
+
+  /**
+   * Optional AWS S3 endpoint URL for file attachments.
+   */
+  @Public
+  @IsOptional()
+  public STRUCTURIZR_S3_URL = environment.STRUCTURIZR_S3_URL;
+
+  /**
+   * Access key ID for AWS S3.
+   */
+  @IsOptional()
+  @CannotUseWithout("STRUCTURIZR_S3_URL")
+  public STRUCTURIZR_S3_ACCESS_KEY = this.toOptionalString(
+      environment.STRUCTURIZR_S3_ACCESS_KEY ?? environment.AWS_ACCESS_KEY_ID
+  );
+
+  /**
+   * Secret key for AWS S3.
+   */
+  @IsOptional()
+  @CannotUseWithout("STRUCTURIZR_S3_ACCESS_KEY")
+  public STRUCTURIZR_S3_SECRET_KEY = this.toOptionalString(
+      environment.STRUCTURIZR_S3_SECRET_KEY ?? environment.AWS_SECRET_ACCESS_KEY
+  );
+
 
 
   /**

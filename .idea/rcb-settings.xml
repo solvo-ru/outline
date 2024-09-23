@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ReactBuddyPluginProjectSettings">
+    <option name="devServerConfigs">
+      <DevServerState>
+        <option name="packageJsonPath" value="$PROJECT_DIR$/package.json" />
+        <option name="scriptName" value="dev:make-up" />
+        <option name="url" value="https://wiki.outline.dev" />
+      </DevServerState>
+      <DevServerState>
+        <option name="packageJsonPath" value="$PROJECT_DIR$/build/package.json" />
+        <option name="scriptName" value="start" />
+        <option name="url" value="https://wiki.outline.dev" />
+      </DevServerState>
+    </option>
+  </component>
+  <component name="StorybookProjectConfigState">
+    <option name="componentSubDirectory" />
+    <option name="useCSF7plus" value="false" />
+  </component>
+</project>

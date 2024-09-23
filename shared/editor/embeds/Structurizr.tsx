@@ -1,27 +1,42 @@
-import * as React from "react";
-import Frame from "../components/Frame";
+import React, { useEffect, useRef } from 'react';
+import {sanitizeUrl} from "../../utils/urls";
+import  Frame  from "../components/Frame";
 import { EmbedProps as Props } from ".";
 
 function Structurizr({ matches, ...props }: Props) {
-  const id = `embed-${Math.floor(1000000 * Math.random())}`;
-  const p = matches[1];
-  const n = matches[2];
-  const w = matches[4];
-  const d = matches[5];
-  const h = matches[6] || "400";
+  const structurizrDomain = matches[1]+matches[2];
+  const canonicalUrl = matches[0];
+  const workspaceId = matches[4];
+  const viewKey = matches[5];
+  const height = matches[6] ? matches[6]+"px" : "400px";
 
-  const normalizedUrl = `${p}${n}/embed/${w}?diagram=${d}&diagramSelector=false&iframe=${id}`;
+    const id = `embed-${Math.floor(1000000 * Math.random())}`;
+    const src = `${structurizrDomain}/embed/${workspaceId}?diagram=${viewKey}&diagramSelector=false&iframe=${id}`;
+    const scriptUrl = sanitizeUrl(`${structurizrDomain}/static/js/structurizr-embed.js`) ?? "";
+    const scriptElement = document.createElement('script');
+    scriptElement.src = scriptUrl;
+    scriptElement.type = "text/javascript";
+    const scriptElementRef = useRef(scriptElement);
+    scriptElementRef.current=scriptElement;
 
-  return (
-    <Frame
-      {...props}
-      src={normalizedUrl}
-      width="100%"
-      height={`${h}px`}
-      allowFullscreen
-      id={`${id}`}
-    />
-  );
+    useEffect(() => {
+
+        document.body.appendChild(scriptElement);
+        return () => {
+            document.body.removeChild(scriptElement);
+        };
+    }, [scriptUrl]);
+
+    return (
+            <Frame
+                {...props}
+                src={src}
+                height={height}
+                allowFullscreen={true}
+                id={id}
+                canonicalUrl={canonicalUrl}
+            />
+    );
 }
 
 export default Structurizr;

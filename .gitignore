@@ -1,9 +1,8 @@
 dist
 build
 node_modules/*
-.env
-.env.local
 .env.production
+.env.local
 .log
 yarn-error.log
 .vscode/*
@@ -11,7 +10,8 @@ npm-debug.log
 stats.json
 .DS_Store
 data/*
-.idea
+.idea/*
+!.idea/rcb-settings.xml
 *.pem
 *.key
 *.cert

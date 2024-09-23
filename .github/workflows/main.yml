@@ -24,7 +24,7 @@ jobs:
       with:
         # optional: set the branch to checkout,
         # sync action checks out your 'target_sync_branch' anyway
-        ref:  master
+        ref:  develop
         # REQUIRED if your upstream repo is private (see wiki)
         persist-credentials: false
 
@@ -34,12 +34,12 @@ jobs:
       id: sync
       uses: aormsby/Fork-Sync-With-Upstream-action@v3.4.1
       with:
-        target_sync_branch: master
+        target_sync_branch: develop
         # REQUIRED 'target_repo_token' exactly like this!
         target_repo_token: ${{ secrets.GITHUB_TOKEN }}
-        upstream_sync_branch: main
-        upstream_sync_repo: outline/outline
-        upstream_repo_access_token: ${{ secrets.UPSTREAM_REPO_SECRET }}
+        upstream_sync_branch: master-fork
+        upstream_sync_repo: solvo-ru/outline
+        upstream_repo_access_token: ${{ secrets.GITHUB_TOKEN }}
 
         # Set test_mode true during manual dispatch to run tests instead of the true action!!
         test_mode: ${{ inputs.sync_test_mode }}

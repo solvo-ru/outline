@@ -7,6 +7,7 @@ COPY ./package.json ./yarn.lock ./
 COPY ./patches ./patches
 
 ARG HTTP_PROXY
+
 RUN if [ -n "$HTTP_PROXY" ]; then \
     yarn config set https-proxy $HTTP_PROXY -g && \
     yarn config set http-proxy $HTTP_PROXY -g && \

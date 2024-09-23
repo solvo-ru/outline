@@ -151,5 +151,33 @@ ${resizeObserverScript(ctx)}
     return;
   }
 
+  if (
+      parsed.host === "structurizr.solvo.ru" &&
+      ctx.path.match(/^\/embeds\/(\d+)$/)
+  ) {
+    const csp = ctx.response.get("Content-Security-Policy");
+
+    ctx.set(
+        "Content-Security-Policy",
+        csp.replace("script-src", "script-src 'self' solvo.ru")
+    );
+    ctx.set("X-Frame-Options", "sameorigin");
+
+    ctx.type = "html";
+    ctx.body = `
+<html>
+<head>
+<style>body { margin: 0; }</style>
+<base target="_parent">
+${iframeCheckScript(ctx)}
+</head>
+<body>
+<script type="text/javascript" src="http://structurizr.solvo.ru/static/js/structurizr-embed.js"></script>
+${resizeObserverScript(ctx)}
+</body>
+`;
+    return;
+  }
+
   return next();
 };

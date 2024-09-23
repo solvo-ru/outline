@@ -7,7 +7,7 @@ WORKDIR $APP_PATH
 # ---
 FROM node:20-slim AS runner
 
-LABEL org.opencontainers.image.source="https://github.com/outline/outline"
+LABEL org.opencontainers.image.source="https://gitlab.solvo.ru/solvo/tool-forks/outline"
 
 ARG APP_PATH
 WORKDIR $APP_PATH
@@ -43,7 +43,7 @@ VOLUME /var/lib/outline/data
 
 USER nodejs
 
-HEALTHCHECK CMD wget -qO- http://localhost:${PORT}/_health | grep -q "OK" || exit 1
+HEALTHCHECK --interval=1m CMD wget -qO- "http://localhost:${PORT:-3000}/_health" | grep -q "OK" || exit 1
 
 EXPOSE 3000
 CMD ["yarn", "start"]

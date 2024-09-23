@@ -1,24 +1,11 @@
-import pako from "pako";
-import {Node} from "prosemirror-model";
-import {Plugin} from "prosemirror-state";
-import {DecorationSet} from "prosemirror-view";
-import env from "../../env";
-import SuperFence, {Cache, Renderer, SuperFenceState} from "./SuperFence";
+import { Node } from "prosemirror-model";
+import { Plugin } from "prosemirror-state";
+import { DecorationSet } from "prosemirror-view";
+import SuperFence, { Cache, Renderer, SuperFenceState } from "./SuperFence";
+import {diagramToSvg, encodeDiagram} from "./kroki/utils";
 
 const PLANT_UML = "plantuml";
 
-async function fetchSVGContent(url: string): Promise<string> {
-  const response = await fetch(url);
-  return await response.text();
-}
-
-function encodeText(text: string) {
-  const data = Buffer.from(text, 'utf8')
-  const compressed = pako.deflate(data, { level: 9 })
-  return Buffer.from(compressed)
-      .toString('base64')
-      .replace(/\+/g, '-').replace(/\//g, '_')
-}
 
 class PlantUMLRenderer extends Renderer {
   constructor() {
@@ -41,9 +28,8 @@ class PlantUMLRenderer extends Renderer {
     }
 
     try {
-      const zippedCode = encodeText(text);
-      const plantServerUrl = `${env.PLANTUML_SERVER_URL}/svg/${zippedCode}`;
-      const svgContent = await fetchSVGContent(plantServerUrl);
+      const encodedText = encodeDiagram(text);
+      const svgContent =await diagramToSvg(PLANT_UML, encodedText)
       this.currentTextContent = text;
       if (text) {
         Cache.set(cacheKey, svgContent);
