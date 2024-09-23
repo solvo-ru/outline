@@ -17,6 +17,7 @@
     "prepare": "husky install",
     "postinstall": "yarn patch-package",
     "install-local-ssl": "node ./server/scripts/install-local-ssl.js",
+    "release": "node ./server/scripts/release.js",
     "heroku-postbuild": "yarn build && yarn db:migrate",
     "db:create-migration": "sequelize migration:create",
     "db:create": "sequelize db:create",
@@ -362,6 +363,6 @@
     "qs": "6.9.7",
     "rollup": "4.21.3"
   },
-  "version": "0.79.2-solvo3",
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  "version": "0.80.1-solvo",
+  "packageManager": "yarn@1.22.22"
 }
