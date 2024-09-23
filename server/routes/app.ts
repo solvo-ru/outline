@@ -80,6 +80,7 @@ export const renderApp = async (
     });
   }
 
+
   const { shareId } = ctx.params;
   const page = await readIndexFile();
   const environment = `
