@@ -1,26 +1,29 @@
-const es = require("eslint-plugin-es");
-const typescriptEslint = require("@typescript-eslint/eslint-plugin");
-const _import = require("eslint-plugin-import");
-const node = require("eslint-plugin-node");
-const react = require("eslint-plugin-react");
-const lodash = require("eslint-plugin-lodash");
-const tsParser = require("@typescript-eslint/parser");
-const js = require("@eslint/js");
-const prettier = require("eslint-config-prettier");
-const prettierPlugin = require("eslint-plugin-prettier");
+import es from "eslint-plugin-es-x";
+import tseslint from "typescript-eslint";
+import typescriptEslint from "@typescript-eslint/eslint-plugin";
+import _import from "eslint-plugin-import-x";
+import node from "eslint-plugin-node";
+import react from "eslint-plugin-react";
+import lodash from "eslint-plugin-lodash";
+import tsParser from "@typescript-eslint/parser";
+import js from "@eslint/js";
+import prettier from "eslint-config-prettier";
+import prettierPlugin from "eslint-plugin-prettier";
 
-module.exports = [
+export default [
   {
     ignores: ["server/migrations/*.js"],
   },
   js.configs.recommended,
-  //typescriptEslint.configs.eslintrecommended,
-  _import.configs.recommended,
-  _import.configs.typescript,
+  ...tseslint.configs.recommended,
+  _import.flatConfigs.recommended,
+
+  _import.flatConfigs.typescript,
   prettier,
   {
     plugins: {
       es: es,
+      tseslint: tseslint,
       typescriptEslint: typescriptEslint,
       import: _import,
       node: node,
@@ -30,9 +33,10 @@ module.exports = [
     },
 
     languageOptions: {
+
       parser: tsParser,
-      ecmaVersion: 2020,
-      sourceType: "script",
+      ecmaVersion: 5,
+      sourceType: "commonjs",
       parserOptions: {
         extraFileExtensions: [".json"],
         project: "./tsconfig.json",
@@ -63,9 +67,9 @@ module.exports = [
       curly: 2,
       "no-console": "error",
       "arrow-body-style": ["error", "as-needed"],
-      "spaced-comment": "error",
+      // "spaced-comment": "error",
       "object-shorthand": "error",
-      "no-mixed-operators": "off",
+      // "no-mixed-operators": "off",
       "no-useless-escape": "off",
       "no-shadow": "off",
       "es/no-regexp-lookbehind-assertions": "error",
@@ -77,14 +81,19 @@ module.exports = [
         },
       ],
 
-      "@typescript-eslint/no-shadow": [
-        "warn",
-        {
-          hoist: "all",
-          ignoreTypeValueShadow: true,
-        },
-      ],
 
+      // "@typescript-eslint": [
+      //   "warn",
+      //   {
+      //     hoist: "all",
+      //     ignoreTypeValueShadow: true,
+      //   },
+      // ],
+
+      "@typescript-eslint/no-require-imports": [
+        "warn",
+        {allowAsImport: true},
+      ],
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/no-floating-promises": "error",
       "@typescript-eslint/await-thenable": "error",
@@ -105,29 +114,29 @@ module.exports = [
         },
       ],
 
-      "padding-line-between-statements": [
+/*      "padding-line-between-statements": [
         "error",
         {
           blankLine: "always",
           prev: "*",
           next: "export",
         },
-      ],
+      ],*/
 
-      "lines-between-class-members": [
+     /* "lines-between-class-members": [
         "error",
         "always",
         {
           exceptAfterSingleLine: true,
         },
-      ],
+      ],*/
 
       "lodash/import-scope": ["warn", "method"],
-      "import/no-named-as-default": "off",
-      "import/no-named-as-default-member": "off",
-      "import/newline-after-import": 2,
+      "import-x/no-named-as-default": "off",
+      "import-x/no-named-as-default-member": "off",
+      "import-x/newline-after-import": 2,
 
-      "import/order": [
+      'import-x/order': [
         "error",
         {
           alphabetize: {
@@ -136,12 +145,12 @@ module.exports = [
 
           pathGroups: [
             {
-              pattern: "@shared/**",
+              pattern: "@shared/!**",
               group: "external",
               position: "after",
             },
             {
-              pattern: "@server/**",
+              pattern: "@server/!**",
               group: "external",
               position: "after",
             },
@@ -151,27 +160,27 @@ module.exports = [
               position: "after",
             },
             {
-              pattern: "~/stores/**",
+              pattern: "~/stores/!**",
               group: "external",
               position: "after",
             },
             {
-              pattern: "~/models/**",
+              pattern: "~/models/!**",
               group: "external",
               position: "after",
             },
             {
-              pattern: "~/scenes/**",
+              pattern: "~/scenes/!**",
               group: "external",
               position: "after",
             },
             {
-              pattern: "~/components/**",
+              pattern: "~/components/!**",
               group: "external",
               position: "after",
             },
             {
-              pattern: "~/**",
+              pattern: "~/!**",
               group: "external",
               position: "after",
             },

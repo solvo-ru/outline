@@ -1,4 +1,5 @@
 import { existsSync, mkdirSync } from "fs";
+import router from "./api/files";
 import env from "@server/env";
 import Logger from "@server/logging/Logger";
 import {
@@ -6,20 +7,7 @@ import {
   PluginPriority,
   Hook,
 } from "@server/utils/PluginManager";
-import router from "./api/files";
-import structurizrRouter from "./api/structurizr";
 
-if (env.STRUCTURIZR_S3_URL) {
-  PluginManager.add([
-    {
-      name: "Structurizr data",
-      description: "Plugin for accessing Structurizr files",
-      type: Hook.API,
-      value: structurizrRouter,
-      priority: PluginPriority.Normal,
-    },
-  ]);
-}
 if (env.FILE_STORAGE === "local") {
   const rootDir = env.FILE_STORAGE_LOCAL_ROOT_DIR;
   try {

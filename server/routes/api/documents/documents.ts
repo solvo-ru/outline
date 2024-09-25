@@ -9,9 +9,8 @@ import uniq from "lodash/uniq";
 import mime from "mime-types";
 import { Op, ScopeOptions, Sequelize, WhereOptions } from "sequelize";
 import { v4 as uuidv4 } from "uuid";
-import { TeamPreference, UserRole } from "@shared/types";
-import { subtractDate } from "@shared/utils/date";
-import slugify from "@shared/utils/slugify";
+import pagination from "../middlewares/pagination";
+import * as T from "./schema";
 import documentCreator from "@server/commands/documentCreator";
 import documentDuplicator from "@server/commands/documentDuplicator";
 import documentLoader from "@server/commands/documentLoader";
@@ -72,8 +71,9 @@ import { RateLimiterStrategy } from "@server/utils/RateLimiter";
 import ZipHelper from "@server/utils/ZipHelper";
 import { getTeamFromContext } from "@server/utils/passport";
 import { assertPresent } from "@server/validation";
-import pagination from "../middlewares/pagination";
-import * as T from "./schema";
+import { TeamPreference, UserRole } from "@shared/types";
+import { subtractDate } from "@shared/utils/date";
+import slugify from "@shared/utils/slugify";
 
 const router = new Router();
 
@@ -650,7 +650,7 @@ router.post(
       contentType = "text/html";
       content = await DocumentHelper.toHTML(document, {
         centered: true,
-        includeMermaid: true,
+        includeKroki: true,
       });
     } else if (accept?.includes("application/pdf")) {
       throw IncorrectEditionError(

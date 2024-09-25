@@ -60,7 +60,6 @@ import zig from "refractor/lang/zig";
 
 import { toast } from "sonner";
 import { Primitive } from "utility-types";
-import type { Dictionary } from "~/hooks/useDictionary";
 import { UserPreferences } from "../../types";
 import { isMac } from "../../utils/browser";
 import backspaceToParagraph from "../commands/backspaceToParagraph";
@@ -74,8 +73,6 @@ import {
 } from "../commands/codeFence";
 import { selectAll } from "../commands/selectAll";
 import toggleBlockType from "../commands/toggleBlockType";
-import Mermaid from "../extensions/Mermaid";
-import PlantUML from "../extensions/PlantUML";
 import DiagramAsCode from "../extensions/DiagramAsCode";
 import Prism from "../extensions/Prism";
 import { getRecentCodeLanguage, setRecentCodeLanguage } from "../lib/code";
@@ -85,6 +82,7 @@ import { findParentNode } from "../queries/findParentNode";
 import { getMarkRange } from "../queries/getMarkRange";
 import { isInCode } from "../queries/isInCode";
 import Node from "./Node";
+import type { Dictionary } from "~/hooks/useDictionary";
 
 const DEFAULT_LANGUAGE = "javascript";
 
@@ -273,15 +271,7 @@ export default class CodeFence extends Node {
         name: this.name,
         lineNumbers: this.showLineNumbers,
       }),
-        DiagramAsCode({
-          name: this.name,
-          isDark: this.editor.props.theme.isDark,
-        }),
-      Mermaid({
-        name: this.name,
-        isDark: this.editor.props.theme.isDark,
-      }),
-      PlantUML({
+      DiagramAsCode({
         name: this.name,
         isDark: this.editor.props.theme.isDark,
       }),

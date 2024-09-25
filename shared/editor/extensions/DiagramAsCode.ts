@@ -10,12 +10,11 @@ import {
 } from "prosemirror-state";
 import { Decoration, DecorationSet } from "prosemirror-view";
 import { v4 as uuidv4 } from "uuid";
-import { Kroki } from "@shared/editor/extensions/kroki/Kroki";
-import { DiagramType } from "@shared/editor/extensions/kroki/types";
-import { encodeDiagram } from "@shared/editor/extensions/kroki/utils";
 import { isCode } from "../lib/isCode";
 import { isRemoteTransaction } from "../lib/multiplayer";
 import { findBlockNodes, NodeWithPos } from "../queries/findChildren";
+import { Kroki } from "@shared/editor/extensions/kroki/Kroki";
+import { DiagramType } from "@shared/editor/extensions/kroki/types";
 
 type DiagramState = {
   decorationSet: DecorationSet;
@@ -78,9 +77,8 @@ class DiagramRenderer {
     }
 
     const kroki = new Kroki();
-    const encodedText = encodeDiagram(text);
     kroki
-      .codeDiagramToSvg(this.krokiType, encodedText)
+      .codeDiagramToSvg(this.krokiType, text)
       .then((svg) => {
         this.currentTextContent = text;
         Cache.set(cacheKey, svg);
@@ -158,7 +156,7 @@ function getNewState({
   const blocks = findBlockNodes(doc).filter(
     (item) =>
       item.node.type.name === name &&
-      item.node.attrs.language satisfies DiagramType
+      (item.node.attrs.language satisfies DiagramType)
   );
 
   let { initialized } = pluginState;
@@ -179,7 +177,8 @@ function getNewState({
     );
 
     const renderer: DiagramRenderer =
-      bestDecoration?.spec?.renderer ?? new DiagramRenderer(block.node.attrs.language);
+      bestDecoration?.spec?.renderer ??
+      new DiagramRenderer(block.node.attrs.language);
 
     const diagramDecoration = Decoration.widget(
       block.pos + block.node.nodeSize,
@@ -218,7 +217,6 @@ function getNewState({
 export default function DiagramAsCode({
   name,
   isDark,
-
 }: {
   name: DiagramType;
   isDark: boolean;
@@ -325,7 +323,7 @@ export default function DiagramAsCode({
               if (
                 nextBlock &&
                 isCode(nextBlock) &&
-                nextBlock.attrs.language satisfies DiagramType
+                (nextBlock.attrs.language satisfies DiagramType)
               ) {
                 view.dispatch(
                   view.state.tr
@@ -351,7 +349,7 @@ export default function DiagramAsCode({
               if (
                 prevBlock &&
                 isCode(prevBlock) &&
-                prevBlock.attrs.language  satisfies DiagramType
+                (prevBlock.attrs.language satisfies DiagramType)
               ) {
                 view.dispatch(
                   view.state.tr

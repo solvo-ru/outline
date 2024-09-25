@@ -8,6 +8,13 @@ import * as React from "react";
 import { renderToString } from "react-dom/server";
 import styled, { ServerStyleSheet, ThemeProvider } from "styled-components";
 import * as Y from "yjs";
+import { TextHelper } from "./TextHelper";
+import { schema, parser } from "@server/editor";
+import Logger from "@server/logging/Logger";
+import { trace } from "@server/logging/tracing";
+import Attachment from "@server/models/Attachment";
+import User from "@server/models/User";
+import FileStorage from "@server/storage/files";
 import EditorContainer from "@shared/editor/components/Styles";
 import embeds from "@shared/editor/embeds";
 import GlobalStyles from "@shared/styles/globals";
@@ -16,13 +23,6 @@ import { ProsemirrorData } from "@shared/types";
 import { attachmentRedirectRegex } from "@shared/utils/ProsemirrorHelper";
 import { isRTL } from "@shared/utils/rtl";
 import { isInternalUrl } from "@shared/utils/urls";
-import { schema, parser } from "@server/editor";
-import Logger from "@server/logging/Logger";
-import { trace } from "@server/logging/tracing";
-import Attachment from "@server/models/Attachment";
-import User from "@server/models/User";
-import FileStorage from "@server/storage/files";
-import { TextHelper } from "./TextHelper";
 
 export type HTMLOptions = {
   /** A title, if it should be included */
@@ -30,7 +30,7 @@ export type HTMLOptions = {
   /** Whether to include style tags in the generated HTML (defaults to true) */
   includeStyles?: boolean;
   /** Whether to include mermaidjs scripts in the generated HTML (defaults to false) */
-  includeMermaid?: boolean;
+  includeKroki?: boolean;
   /** Whether to include styles to center diff (defaults to true) */
   centered?: boolean;
   /** The base URL to use for relative links */
@@ -448,13 +448,13 @@ export class ProsemirrorHelper {
     }
 
     // Inject mermaidjs scripts if the document contains mermaid diagrams
-    if (options?.includeMermaid) {
-      const mermaidElements = dom.window.document.querySelectorAll(
+    if (options?.includeKroki) {
+      const krokiElements = dom.window.document.querySelectorAll(
         `[data-language="mermaid"] pre code`
       );
 
       // Unwrap <pre> tags to enable Mermaid script to correctly render inner content
-      for (const el of mermaidElements) {
+      for (const el of krokiElements) {
         const parent = el.parentNode as HTMLElement;
         if (parent) {
           while (el.firstChild) {
@@ -469,7 +469,7 @@ export class ProsemirrorHelper {
       element.setAttribute("type", "module");
 
       // Inject Mermaid script
-      if (mermaidElements.length) {
+      if (krokiElements.length) {
         element.innerHTML = `
           import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs';
           mermaid.initialize({

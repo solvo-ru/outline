@@ -5,17 +5,17 @@ import {
 import { JSDOM } from "jsdom";
 import { Node } from "prosemirror-model";
 import * as Y from "yjs";
-import textBetween from "@shared/editor/lib/textBetween";
-import { EditorStyleHelper } from "@shared/editor/styles/EditorStyleHelper";
-import { IconType, ProsemirrorData } from "@shared/types";
-import { determineIconType } from "@shared/utils/icon";
+import { ProsemirrorHelper } from "./ProsemirrorHelper";
+import { TextHelper } from "./TextHelper";
 import { parser, serializer, schema } from "@server/editor";
 import { addTags } from "@server/logging/tracer";
 import { trace } from "@server/logging/tracing";
 import { Collection, Document, Revision } from "@server/models";
 import diff from "@server/utils/diff";
-import { ProsemirrorHelper } from "./ProsemirrorHelper";
-import { TextHelper } from "./TextHelper";
+import textBetween from "@shared/editor/lib/textBetween";
+import { EditorStyleHelper } from "@shared/editor/styles/EditorStyleHelper";
+import { IconType, ProsemirrorData } from "@shared/types";
+import { determineIconType } from "@shared/utils/icon";
 
 type HTMLOptions = {
   /** Whether to include the document title in the generated HTML (defaults to true) */
@@ -23,7 +23,7 @@ type HTMLOptions = {
   /** Whether to include style tags in the generated HTML (defaults to true) */
   includeStyles?: boolean;
   /** Whether to include the Mermaid script in the generated HTML (defaults to false) */
-  includeMermaid?: boolean;
+  includeKroki?: boolean;
   /** Whether to include styles to center diff (defaults to true) */
   centered?: boolean;
   /**
@@ -191,7 +191,7 @@ export class DocumentHelper {
     let output = ProsemirrorHelper.toHTML(node, {
       title: options?.includeTitle !== false ? document.title : undefined,
       includeStyles: options?.includeStyles,
-      includeMermaid: options?.includeMermaid,
+      includeKroki: options?.includeKroki,
       centered: options?.centered,
       baseUrl: options?.baseUrl,
     });

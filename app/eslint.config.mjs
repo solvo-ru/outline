@@ -1,11 +1,10 @@
 import reactHooks from "eslint-plugin-react-hooks";
 import react from "eslint-plugin-react";
-
 import globals from "globals";
-
+import root from "../eslint.config.mjs";
 
 export default [
-    "../eslint.config.js",
+    root,
     react.configs.recommended,
     reactHooks.configs.recommended,
     {

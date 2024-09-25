@@ -24,10 +24,10 @@ import {
 import * as React from "react";
 import styled from "styled-components";
 import Image from "@shared/editor/components/Img";
+import { krokiDiagrams } from "@shared/editor/extensions/kroki/types";
 import { MenuItem } from "@shared/editor/types";
 import { Dictionary } from "~/hooks/useDictionary";
 import { metaDisplay } from "~/utils/keyboard";
-import {krokiDiagrams} from "@shared/editor/extensions/kroki/types";
 
 const Img = styled(Image)`
   border-radius: 2px;
@@ -199,28 +199,12 @@ export default function blockMenuItems(dictionary: Dictionary): MenuItem[] {
     {
       name: "separator",
     },
-    {
+    ...Object.entries(krokiDiagrams).map(([key, value]) => ({
       name: "code_block",
-      title: "Mermaid Diagram",
-      icon: <Img src="/images/mermaidjs.png" alt="Mermaid Diagram" />,
+      title: value,
+      icon: <Img src={`/images/${key}.png`} alt={value} />,
       keywords: "diagram flowchart",
-      attrs: { language: "mermaid" },
-    },
-    {
-      name: "code_block",
-      title: "PlantUML Diagram",
-      icon: <Img src="/images/plantuml.png" alt="PlantUML Diagram" />,
-      keywords: "diagram flowchart",
-      attrs: { language: "plantuml" },
-    },
-      ...Object.entries(krokiDiagrams).map(([key, value]) => {
-        return {
-          name: "code_block",
-          title: value,
-          icon: <Img src={`/images/${key}.png`} alt={value} />,
-          keywords: "diagram flowchart",
-          attrs: { language: key },
-        };
-      })
+      attrs: { language: key },
+    })),
   ];
 }
