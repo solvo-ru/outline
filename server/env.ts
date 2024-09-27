@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
-// eslint-disable-next-line import/order
-import environment from "./utils/environment";
+
 import os from "os";
 import {
   validate,
@@ -14,11 +13,12 @@ import {
   IsBoolean,
 } from "class-validator";
 import uniq from "lodash/uniq";
-import { languages } from "@shared/i18n";
-import { CannotUseWithout } from "@server/utils/validators";
 import Deprecated from "./models/decorators/Deprecated";
 import { getArg } from "./utils/args";
 import { Public, PublicEnvironmentRegister } from "./utils/decorators/Public";
+import environment from "./utils/environment";
+import { CannotUseWithout } from "@server/utils/validators";
+import { languages } from "@shared/i18n";
 
 export class Environment {
   constructor() {
@@ -613,7 +613,6 @@ export class Environment {
   @Public
   public APP_NAME = "Outline";
 
-
   /**
    * The Kroki server url.
    */
@@ -621,36 +620,10 @@ export class Environment {
   @IsNotEmpty()
   @IsUrl({
     require_tld: false,
-    allow_underscores: true
+    allow_underscores: true,
   })
-  public KROKI_SERVER_URL = environment.KROKI_SERVER_URL ?? "https://www.kroki.com";
-
-  /**
-   * Optional AWS S3 endpoint URL for file attachments.
-   */
-  @Public
-  @IsOptional()
-  public STRUCTURIZR_S3_URL = environment.STRUCTURIZR_S3_URL;
-
-  /**
-   * Access key ID for AWS S3.
-   */
-  @IsOptional()
-  @CannotUseWithout("STRUCTURIZR_S3_URL")
-  public STRUCTURIZR_S3_ACCESS_KEY = this.toOptionalString(
-      environment.STRUCTURIZR_S3_ACCESS_KEY ?? environment.AWS_ACCESS_KEY_ID
-  );
-
-  /**
-   * Secret key for AWS S3.
-   */
-  @IsOptional()
-  @CannotUseWithout("STRUCTURIZR_S3_ACCESS_KEY")
-  public STRUCTURIZR_S3_SECRET_KEY = this.toOptionalString(
-      environment.STRUCTURIZR_S3_SECRET_KEY ?? environment.AWS_SECRET_ACCESS_KEY
-  );
-
-
+  public KROKI_SERVER_URL =
+    environment.KROKI_SERVER_URL ?? "https://www.kroki.com";
 
   /**
    * Returns true if the current installation is the cloud hosted version at
@@ -712,7 +685,7 @@ export class Environment {
   protected toBoolean(value: string) {
     try {
       return value ? !!JSON.parse(value) : false;
-    } catch (err) {
+    } catch {
       throw new Error(
         `"${value}" could not be parsed as a boolean, must be "true" or "false"`
       );
@@ -734,7 +707,7 @@ export class Environment {
   protected toOptionalBoolean(value: string | undefined) {
     try {
       return value ? !!JSON.parse(value) : undefined;
-    } catch (err) {
+    } catch {
       return undefined;
     }
   }

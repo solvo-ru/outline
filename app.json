@@ -1,14 +1,13 @@
 {
   "name": "Outline",
   "description": "Open source wiki and knowledge base for growing teams",
-  "website": "https://www.getoutline.com/",
-  "repository": "https://github.com/outline/outline",
+  "website": "http://outline.solvo.ru/",
+  "repository": "https://gitlab.solvo.ru/solvo/tool-forks/outline",
   "keywords": [
     "wiki",
     "team",
     "node",
-    "markdown",
-    "slack"
+    "markdown"
   ],
   "success_url": "/",
   "formation": {
@@ -219,10 +218,6 @@
     },
     "KROKI_SERVER_URL": {
       "value": "https://kroki.moarse.ru",
-      "required": false
-    },
-    "STRUCTURIZR_S3_URL": {
-      "value": "https://s3.solvo.ru/structurizr",
       "required": false
     }
   }
