@@ -1,7 +1,6 @@
 import pako from "pako";
 import env from "../../../env";
 import { DiagramOptions, DiagramType } from "./types";
-import Logger from "@server/logging/Logger";
 
 export class Kroki {
   private readonly serverUrl: string;
@@ -21,7 +20,8 @@ export class Kroki {
       const compressed: string = pako.deflate(data, { level: 9, to: "string" });
       return btoa(compressed).replace(/\+/g, "-").replace(/\//g, "_");
     } catch (error) {
-      Logger.error("Error encoding diagram:", error);
+      // eslint-disable-next-line no-console
+      console.error("Error encoding diagram:", error);
       throw new Error("Failed to encode diagram.");
     }
   }
@@ -58,7 +58,8 @@ export class Kroki {
 
       return await response.text();
     } catch (error) {
-      Logger.error("Error converting diagram to SVG:", error);
+      // eslint-disable-next-line no-console
+      console.error("Error converting diagram to SVG:", error);
       throw new Error("Failed to convert diagram to SVG.");
     }
   }

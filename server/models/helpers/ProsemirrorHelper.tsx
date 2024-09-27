@@ -1,3 +1,5 @@
+// noinspection t
+
 import { prosemirrorToYDoc } from "@getoutline/y-prosemirror";
 import { JSDOM } from "jsdom";
 import compact from "lodash/compact";
@@ -447,21 +449,22 @@ export class ProsemirrorHelper {
       }
     }
 
-    // Inject mermaidjs scripts if the document contains mermaid diagrams
+    /*// Inject mermaidjs scripts if the document contains mermaid diagrams
     if (options?.includeKroki) {
       const krokiElements = dom.window.document.querySelectorAll(
-        `[data-language="mermaid"] pre code`
+        `[isKroki=true] pre code`
       );
 
       // Unwrap <pre> tags to enable Mermaid script to correctly render inner content
       for (const el of krokiElements) {
+        el.setAttribute("class", "code-block with-line-numbers");
         const parent = el.parentNode as HTMLElement;
         if (parent) {
           while (el.firstChild) {
             parent.insertBefore(el.firstChild, el);
           }
           parent.removeChild(el);
-          parent.setAttribute("class", "mermaid");
+          parent.setAttribute("class", "kroki");
         }
       }
 
@@ -485,7 +488,7 @@ export class ProsemirrorHelper {
       }
 
       dom.window.document.body.appendChild(element);
-    }
+    }*/
 
     return dom.serialize();
   }

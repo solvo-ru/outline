@@ -202,7 +202,7 @@ export default function blockMenuItems(dictionary: Dictionary): MenuItem[] {
     ...Object.entries(krokiDiagrams).map(([key, value]) => ({
       name: "code_block",
       title: value,
-      icon: <Img src={`/images/${key}.png`} alt={value} />,
+      icon: <Img src={`/images/${key}.png`} alt="" />,
       keywords: "diagram flowchart",
       attrs: { language: key },
     })),
